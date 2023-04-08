@@ -1,0 +1,2 @@
+D:\OneDrive\Desktop\School\Mapua\College\2nd Year IT\3rd Term\IT128 and IT128L\WEEK 11\Documents\M2_Final-Project\Web\obj\Debug\Web.esproj.SuggestedBindingRedirects.cache
+D:\OneDrive\Desktop\School\Mapua\College\2nd Year IT\3rd Term\IT128 and IT128L\WEEK 11\Documents\M2_Final-Project\Web\obj\Debug\Web.esproj.CoreCompileInputs.cache
