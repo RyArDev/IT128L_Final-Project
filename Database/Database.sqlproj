@@ -63,5 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Users.sql" />
+    <Build Include="Stored Procedures\spUsers_Add.sql" />
+    <Build Include="Stored Procedures\spUsers_Login.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\scrUsers_Add.sql" />
   </ItemGroup>
 </Project>
