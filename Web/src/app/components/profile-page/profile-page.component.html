@@ -1,0 +1,118 @@
+<div class="profile-page">
+  <div class="container">
+    <app-alert-system [message]="alertMessage" [success]="alertSuccess" [error]="alertError"></app-alert-system>
+    <div class="row p-5">
+      <h1 class="text-center display-1 m-3">PROFILE</h1>
+      <div class="col-md-12 text-center">
+        <img src="{{ user.ProfilePicUrl }}" width="250px" />
+        <div class="mt-5">
+          <p>Username: {{user.UserName}}</p>
+          <p>First Name: {{user.FirstName}}</p>
+          <p>Last Name: {{user.LastName}}</p>
+          <p>Email: {{user.Email}}</p>
+        </div>
+      </div>
+      <button type="button" (click)="initializeUpdateForm()" class="btn btn-dark" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateForm" style="z-index: 1;">
+        Edit profile
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="updateForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateUserForm" autocomplete="on" novalidate (ngSubmit)="updateUser(updateUserForm.value)" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="UserName">Username</label>
+                <input type="text" id="UserName" formControlName="UserName" class="form-control form-control-lg" placeholder="JohnDoe123" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('UserName') && hasError('UserName', 'required')">Username is required and at least 4 chracters long</em>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="form-outline">
+                <label class="form-label" for="FirstName">First Name</label>
+                <input type="text" id="FirstName" formControlName="FirstName" class="form-control form-control-lg" placeholder="John" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('FirstName') && hasError('FirstName', 'required')">First name is required and at least 3 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="form-outline">
+                <label class="form-label" for="LastName">Last Name</label>
+                <input type="text" id="LastName" formControlName="LastName" class="form-control form-control-lg" placeholder="Doe" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('LastName') && hasError('LastName', 'required')">Last name is required and at least 3 chracters long</em>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-4">
+              <div class="form-outline">
+                <label class="form-label" for="Email">Email</label>
+                <input type="email" id="Email" formControlName="Email" class="form-control form-control-lg" placeholder="user@example.com" />
+              </div>
+              <div class="col-md-6 text-danger">
+                <em *ngIf="validateControl('Email') && hasError('Email', 'required')">Email is required</em>
+                <em *ngIf="validateControl('Email') && hasError('Email', 'email')">Please provide a valid email</em>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="Password">Password</label>
+                <input type="password" id="Password" formControlName="Password" class="form-control form-control-lg" placeholder="Password" />
+              </div>
+              <div class="col-md-12 text-danger text-justify">
+                <em *ngIf="validateControl('Password') && hasError('Password', 'required')">Password is required</em>
+                <em *ngIf="hasError('Password', 'pattern')">
+                  Password must contain at least one number, one uppercase and a lowercase letter, and a special character.
+                  Also, the password must be at least 8 characters and cannot contain whitespace.
+                </em>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="ConfirmPassword">Confirm Password</label>
+                <input type="password" id="ConfirmPassword" formControlName="ConfirmPassword" class="form-control form-control-lg" placeholder="Confirm Password" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="hasError('ConfirmPassword', 'mustMatch')">Passwords must match</em>
+                <em *ngIf="validateControl('ConfirmPassword') && hasError('ConfirmPassword', 'required')">Confirmation is required</em>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="ProfilePicUrl">Upload Profile Picture</label>
+                <input type="file" (change)="this.imageUpload.onFileSelected($event)" accept="image/*" id="ProfilePicUrl" class="form-control form-control-lg" placeholder="ProfilePhoto">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <div>
+              <input class="btn btn-danger" type="submit" *ngIf="!updateUserForm.valid" value="Update" disabled />
+              <input class="btn btn-primary" type="submit" *ngIf="updateUserForm.valid" data-bs-dismiss="modal" value="Update" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

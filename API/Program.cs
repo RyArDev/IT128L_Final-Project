@@ -1,3 +1,7 @@
+using API.Controllers;
+using API.Interfaces;
+using API.Services.Database;
+using API.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +16,11 @@ namespace API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddTransient<UserController>();
+            builder.Services.AddTransient<FileController>();
+            builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             builder.Services.AddControllers();
             builder.Services.AddControllersWithViews();
@@ -72,13 +80,11 @@ namespace API
 
             app.UseCors("LocalAPIRequests");
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapControllers();
-
-            app.UseStaticFiles();
+            app.MapFallbackToFile("index.html");
 
             app.Run();
         }

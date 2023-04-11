@@ -1,1 +1,44 @@
-<p>login-page works!</p>
+<div class="login-page">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <app-alert-system [message]="alertMessage" [success]="alertSuccess" [error]="alertError"></app-alert-system>
+        <h2 class="text-center text-dark mt-5">Welcome Back</h2>
+        <div class="text-center mb-5 text-dark">Please login to play!</div>
+        <div class="card my-5">
+          <form class="card-body cardbody-color p-lg-5" [formGroup]="loginForm" autocomplete="on" novalidate (ngSubmit)="loginUser(loginForm.value)">
+            <div class="text-center">
+              <img src="../../../assets/components/login-page/login-icon.webp" class="img-fluid login-image-pic img-thumbnail rounded-circle my-3" alt="profile">
+            </div>
+            <div class="col-md-12 mb-3">
+              <div class="form-outline">
+                <input type="text" id="UserName" formControlName="UserName" class="form-control form-control-lg" placeholder="Username" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('UserName') && hasError('UserName', 'required')">Username is required</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <div class="form-outline">
+                <input type="password" id="Password" formControlName="Password" class="form-control form-control-lg" placeholder="Password" />
+              </div>
+              <div class="col-md-12 text-danger text-justify">
+                <em *ngIf="validateControl('Password') && hasError('Password', 'required')">Password is required</em>
+              </div>
+            </div>
+            <div class="pb-5" *ngIf="!loginForm.valid">
+              <input class="btn btn-danger btn-lg w-100" type="submit" value="Login" disabled />
+              <em class="col-md-4 text-danger"> Please fill in all the details.</em>
+            </div>
+            <div class="pb-5" *ngIf="loginForm.valid">
+              <input class="btn btn-primary btn-lg w-100" type="submit" value="Login" />
+            </div>
+            <div id="emailHelp" class="form-text text-center mb-3 text-dark">
+              Not Registered? <a href="/register" class="text-dark fw-bold"> Create an Account </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

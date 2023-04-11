@@ -14,8 +14,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\models\" />
-    <Folder Include="src\services\" />
+    <Folder Include="src\app\components\alert-system\" />
   </ItemGroup>
   <PropertyGroup>
     <StartupCommand>npm start</StartupCommand>

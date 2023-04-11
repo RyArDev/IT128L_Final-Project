@@ -2,8 +2,8 @@
 const fs = require('fs');
 const spawn = require('child_process').spawn;
 const path = require('path');
-const certFilePath = require('../Web/https/web.pem');
-const keyFilePath = require('../Web/https/web.key');
+//const certFilePath = require('../Web/https/web.pem');
+//const keyFilePath = require('../Web/https/web.key');
 
 const baseFolder =
   process.env.APPDATA !== undefined && process.env.APPDATA !== ''
@@ -18,8 +18,8 @@ if (!certificateName) {
   process.exit(-1);
 }
 
-//const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
-//const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
+const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
+const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
 if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
   spawn('dotnet', [
