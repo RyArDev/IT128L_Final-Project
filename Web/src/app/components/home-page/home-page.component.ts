@@ -69,7 +69,6 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
     this.pokemonAPI.getPokemon(3, n).then((data) => {
 
       this.pokemons = data;
-      console.log(this.pokemons)
 
     }).catch((error) => {
 
@@ -93,7 +92,6 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
     this.pokemonAPI.getItems(3, n).then((data) => {
 
       this.items = data;
-      console.log(this.items);
 
     }).catch((error) => {
 
