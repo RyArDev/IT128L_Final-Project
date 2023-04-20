@@ -71,6 +71,8 @@
     <Build Include="Stored Procedures\Users\spUsers_RefreshToken.sql" />
     <Build Include="Stored Procedures\Users\spUsers_GetAll.sql" />
     <Build Include="Stored Procedures\Users\spUsers_GetById.sql" />
+    <Build Include="dbo\Tables\Pokemon.sql" />
+    <Build Include="dbo\Tables\Items.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\scrUsers_Add.sql" />
