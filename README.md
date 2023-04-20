@@ -15,7 +15,11 @@ Step 2: Publish the database into the (localdb)\MSSQLLocalDB server, use the exi
 
 Step 3: Click the drop down beside the run button and go to Configure startup projects where you click multiple startup projects and put every action to start.
 
-Step 4: In your Git Bash terminal go to the directory of the Web project then type * npm start
+Step 4: In your Git Bash terminal go to the directory of the Web project then type 
+
+```Git Bash Terminal
+npm start
+```
 
 Step 5: Click start at the top of the Visual Studio IDE and wait for two browsers to pup up where 1 is SwaggerGen and 1 is the Angular Website.
 
