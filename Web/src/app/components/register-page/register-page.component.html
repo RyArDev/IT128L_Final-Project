@@ -76,12 +76,20 @@
               </div>
             </div>
           </div>
-          <div class="mt-4 pt-2" *ngIf="!registerForm.valid">
-            <input class="btn btn-danger btn-lg" type="submit" value="Register" disabled />
-            <em class="col-md-4 text-danger"> Please fill in all the details.</em>
+          <div *ngIf="!isUserLoggedIn">
+            <div class="mt-4 pt-2" *ngIf="!registerForm.valid">
+              <input class="btn btn-danger btn-lg" value="Register" disabled />
+              <em class="col-md-4 text-danger"> Please fill in all the details.</em>
+            </div>
+            <div class="mt-4 pt-2" *ngIf="registerForm.valid">
+              <input class="btn btn-primary btn-lg" type="submit" value="Register" />
+            </div>
           </div>
-          <div class="mt-4 pt-2" *ngIf="registerForm.valid">
-            <input class="btn btn-primary btn-lg" type="submit" value="Register" />
+          <div *ngIf="isUserLoggedIn">
+            <div class="mt-4 pt-2" *ngIf="!registerForm.valid">
+              <input class="btn btn-danger btn-lg" value="Register" disabled />
+              <em class="col-md-4 text-danger"> You are already logged in.</em>
+            </div>
           </div>
         </form>
       </div>

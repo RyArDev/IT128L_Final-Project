@@ -16,6 +16,9 @@ import { AuthInterceptor } from '../services/auth/auth-interceptor';
 import { ErrorHandler } from '../services/error/error-handler';
 import { FooterComponent } from './components/footer/footer.component';
 import { AlertSystemComponent } from './components/alert-system/alert-system.component';
+import { PokemonPageComponent } from './components/pokemon-page/pokemon-page.component';
+import { ItemPageComponent } from './components/item-page/item-page.component';
+import { BuildPageComponent } from './components/build-page/build-page.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { AlertSystemComponent } from './components/alert-system/alert-system.com
     NavBarComponent,
     ProfilePageComponent,
     FooterComponent,
-    AlertSystemComponent
+    AlertSystemComponent,
+    PokemonPageComponent,
+    ItemPageComponent,
+    BuildPageComponent
   ],
   imports: [
     BrowserModule,
@@ -36,6 +42,9 @@ import { AlertSystemComponent } from './components/alert-system/alert-system.com
     FormsModule,
     RouterModule.forRoot([
       { path: 'home', component: HomePageComponent },
+      { path: 'pokemon', component: PokemonPageComponent },
+      { path: 'items', component: ItemPageComponent },
+      { path: 'builds', component: BuildPageComponent },
       { path: 'register', component: RegisterPageComponent },
       { path: 'login', component: LoginPageComponent },
       { path: 'profile', component: ProfilePageComponent },
@@ -60,3 +69,14 @@ import { AlertSystemComponent } from './components/alert-system/alert-system.com
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+
+/* PokeAPI - https://pokeapi.co/docs/v2
+
+Wrapper Libraries
+Node Server-side with auto caching: Pokedex Promise v2 by Thomas Asadurian and Alessandro Pezzé - https://github.com/PokeAPI/pokedex-promise-v2
+Browser-side with auto caching: pokeapi-js-wrapper by Alessandro Pezzé - https://github.com/PokeAPI/pokeapi-js-wrapper
+.NET (C#, VB, etc): PokeApi.NET by PoroCYon - https://github.com/mtrdp642/PokeApiNet
+Typescript with auto caching: Pokenode-ts by Gabb-c - https://github.com/Gabb-c/pokenode-ts
+
+*/

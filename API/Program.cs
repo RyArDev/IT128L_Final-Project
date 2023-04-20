@@ -17,6 +17,7 @@ namespace API
 
             // Add services to the container.
             builder.Services.AddTransient<UserController>();
+            builder.Services.AddTransient<PokemonController>();
             builder.Services.AddTransient<FileController>();
             builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

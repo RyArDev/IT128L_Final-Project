@@ -2,6 +2,13 @@
     height: 100vh;
 }
 
+.profile-picture {
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    border: 5px solid black;
+}
+
 @media (max-width: 1200px) {
 }
 

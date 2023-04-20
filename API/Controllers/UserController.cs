@@ -13,15 +13,15 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private IConfiguration _config;
-        private ISqlDataAccess _db;
-        private JwtTokenHandler jwtToken = new JwtTokenHandler();
-        private PasswordHandler passHandler = new PasswordHandler();
-        private DatabaseConnectionHandler _connection = new DatabaseConnectionHandler();
-        private JSONHandler jsonHandler = new JSONHandler();
+        private readonly IConfiguration _config;
+        private readonly ISqlDataAccess _db;
+        private readonly JwtTokenHandler jwtToken = new();
+        private readonly PasswordHandler passHandler = new();
+        private readonly DatabaseConnectionHandler _connection = new();
+        private readonly JSONHandler jsonHandler = new();
         private const string connectionStringName = "SqlDb";
         private readonly ILogger<UserController> _logger;
-        private IWebHostEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         public UserController(ILogger<UserController> logger, IWebHostEnvironment env)
         {

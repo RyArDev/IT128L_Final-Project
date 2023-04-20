@@ -9,9 +9,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class FileController : ControllerBase
     {
-        private JSONHandler jsonHandler = new JSONHandler();
+        private readonly JSONHandler jsonHandler = new();
         private readonly ILogger<FileController> _logger;
-        private IWebHostEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         public FileController(ILogger<FileController> logger, IWebHostEnvironment env)
         {
