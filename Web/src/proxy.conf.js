@@ -1,6 +1,6 @@
 const PROXY_CONFIG = [
   {
-    context: [],
+    context: ["/api"],
     target: "https://localhost:7235",
     changeOrigin: true,  // helps on CORS Error in F12
     logLevel: "debug",

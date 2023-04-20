@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild, OnChanges, OnInit, SimpleChanges, ElementRef, AfterViewInit } from '@angular/core';
 import { ItemAPI } from '../../../models/pokemon/item-api';
 import { PokemonAPI } from '../../../models/pokemon/pokemon-api';

@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { UserLogin } from '../../../models/user/user-login';
 import { AuthToken } from '../../../services/auth/auth-token';
 import { UserService } from '../../../services/user/user-service';
-import { AlertSystemComponent } from '../alert-system/alert-system.component';
 
 @Component({
   selector: 'app-login-page',
