@@ -24,7 +24,7 @@ Step 2: Publish Database
 
 Step 3: Configure Startup Projects
 
-1. Click the drop down menu beside the run button in the Visual Studio IDE and click Configure startup projects 
+1. Click the drop down menu beside the run project button in the Visual Studio IDE and click Configure startup projects. 
 2. Click multiple startup projects and put every action to start.
 
 * Database - Start
@@ -43,7 +43,7 @@ npm start
 
 Step 5: Starting the Project
 
-1. Click start at the top of the Visual Studio IDE and wait for two browsers to pop up where 1 is SwaggerGen and 1 is the Angular Website.
+1. Click the start button at the top of the Visual Studio IDE and wait for two browsers to pop up where 1 is SwaggerGen and 1 is the Angular Website.
 
 -----
 
