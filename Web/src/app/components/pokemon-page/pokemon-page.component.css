@@ -1,3 +1,21 @@
-.pokemon{
-    height: 100vh;
+.pokemon {
+  height: inherit;
+}
+
+.search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+  .search-btn:hover {
+    background-color: #0069d9;
+    color: white;
+  }
+
+.search-icon {
+  margin-right: 0.5rem;
 }

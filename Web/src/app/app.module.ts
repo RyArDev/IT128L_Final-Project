@@ -19,6 +19,7 @@ import { AlertSystemComponent } from './components/alert-system/alert-system.com
 import { PokemonPageComponent } from './components/pokemon-page/pokemon-page.component';
 import { ItemPageComponent } from './components/item-page/item-page.component';
 import { BuildPageComponent } from './components/build-page/build-page.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { BuildPageComponent } from './components/build-page/build-page.component
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
+    NgxPaginationModule,
     RouterModule.forRoot([
       { path: 'home', component: HomePageComponent },
       { path: 'pokemon', component: PokemonPageComponent },

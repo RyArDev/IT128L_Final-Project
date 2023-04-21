@@ -27,9 +27,6 @@
         <div class="col-md-6 gx-5 mb-4">
           <div class="bg-image hover-overlay ripple shadow-2-strong rounded-5" data-mdb-ripple-color="light">
             <img src="../../../assets/components/home-page/pokeball.png" class="img-fluid" />
-            <a href="#!">
-              <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-            </a>
           </div>
         </div>
         <div class="col-md-6 gx-5 mb-4 d-flex align-items-center">
@@ -67,12 +64,9 @@
           <div class="card">
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
               <img src="{{pokemon.sprites?.front_default}}" class="img-fluid" width="150" />
-              <a href="#!">
-                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-              </a>
             </div>
             <div class="card-body">
-              <h5 class="card-title">{{pokemon.name}}</h5>
+              <h5 class="card-title text-capitalize">{{pokemon.name}}</h5>
               <p class="card-text">
                 ID: {{pokemon.id}}, Weight: {{pokemon.weight}}
               </p>
@@ -106,12 +100,9 @@
           <div class="card">
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
               <img src="{{item.sprites?.default}}" class="img-fluid" width="150" />
-              <a href="#!">
-                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-              </a>
             </div>
             <div class="card-body">
-              <h5 class="card-title">{{item.name}}</h5>
+              <h5 class="card-title text-capitalize">{{item.name}}</h5>
               <p class="card-text">
                 ID: {{item.id}}, Cost: {{item.cost}}
               </p>

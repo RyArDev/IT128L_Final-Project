@@ -1,10 +1,46 @@
 <div class="pokemon">
   <app-alert-system [message]="alertMessage" [success]="alertSuccess" [error]="alertError"></app-alert-system>
   <div class="container">
+    <div class="col-md-12 text-center">
+      <div class="input-group mb-3 mt-5">
+        <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm">
+        <button id="search-btn" (click)="search()">Search</button>
+        <button id="reset-btn" (click)="reset()">Reset</button>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12 text-center">
-        <p>pokemon-page works!</p>
+        <div class="row">
+          <div class="col-lg-4 col-md-12 mb-4" *ngFor="let pokemon of pokemons | paginate: { itemsPerPage: 12, currentPage: p }">
+            <div class="card">
+              <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                <img src="{{pokemon.sprites?.front_default}}" class="img-fluid" width="150" />
+                <a href="#!">
+                  <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{pokemon.name}}</h5>
+                <p class="card-text">
+                  Type: {{pokemon.types?.[0]?.type?.name}}
+                </p>
+                <p class="card-text">
+                  Height: {{pokemon.height}},
+                </p>
+                <div class="card-text">
+                  Skill: <p *ngFor="let item of [].constructor(3); let i = index">{{[i+1]}}. {{pokemon.moves?.[i]?.move?.name}}</p>
+                </div>
+                <button *ngIf="!this.isUserLoggedIn" class="btn btn-danger" disabled>ADD</button>
+                <button *ngIf="this.isUserLoggedIn" class="btn btn-primary">ADD</button>
+                <button class="btn btn-primary">INFO</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="pagination justify-content-center">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
     </div>
   </div>
 </div>
