@@ -1,3 +1,51 @@
 .build {
-  height: 100vh;
+  height: inherit;
+  color:black;
+}
+
+.comp {
+  height: 105vh;
+  background-color: #C7C8C9;
+  padding: 30px;
+}
+
+.builds_list {
+  padding-right: 30px;
+}
+
+.scroll_1{
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 250px;
+  background-color: white;
+}
+
+.scroll_2 {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 225px;
+}
+
+.profile-picture {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  border: 3px solid black;
+}
+
+.clickable:hover{
+  cursor:pointer;
+}
+
+.highlight {
+  background-color: black;
+  color: white;
+}
+
+@media (max-width: 990px) {
+
+  .comp {
+    height: inherit;
+  }
+
 }

@@ -37,7 +37,7 @@ export class AlertSystemComponent implements OnInit, OnChanges {
     }
     this.alertTimer = await setTimeout(() => {
       this.closeAlert();
-    }, 5000);
+    }, 3000);
   }
 
   resetAlertTimer(): void {

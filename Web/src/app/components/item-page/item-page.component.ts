@@ -42,6 +42,9 @@ export class ItemPageComponent {
   isSearchingBuilds: boolean = false;
   isBuildSelected: boolean = false;
 
+  compositionClicked: number | null = null;
+  buildClicked: number | null = null;
+
   constructor(
     private authToken: AuthToken,
     private pokemonAPI: PokemonAPIService,
@@ -153,6 +156,14 @@ export class ItemPageComponent {
 
   }
 
+  private uniqBy<T>(a: T[], key: (item: T) => string | number): T[] {
+    const seen: { [key: string]: boolean } = {};
+    return a.filter((item) => {
+      const k = key(item);
+      return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+    });
+  }
+
   protected retrieveData() {
 
     this.isLoading = true;
@@ -177,7 +188,9 @@ export class ItemPageComponent {
     let itemFilter = this.items;
 
     if (this.filteredItems.length !== 0) {
+
       this.filteredItems = [];
+
     }
 
     if (parseInt(this.searchTerm)) {
@@ -188,17 +201,14 @@ export class ItemPageComponent {
     } else {
 
       itemFilter = this.items.filter(item => item.name!.toLowerCase().includes(this.searchTerm.toLowerCase()));
-
-      if (itemFilter.length === 0) {
-
-        itemFilter = this.items.filter(item => item.effect_entries![0].short_effect!.toLowerCase().includes(this.searchTerm.toLowerCase()));
-        itemFilter.push(...this.items.filter(item => item.effect_entries![0].effect!.toLowerCase().includes(this.searchTerm.toLowerCase())));
-        itemFilter.push(...this.items.filter(item => item.effect_entries!.find(effect => effect.short_effect!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
-        itemFilter.push(...this.items.filter(item => item.effect_entries!.find(effect => effect.effect!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
-
-      }
+      itemFilter.push(...this.items.filter(item => item.effect_entries![0].short_effect!.toLowerCase().includes(this.searchTerm.toLowerCase())));
+      itemFilter.push(...this.items.filter(item => item.effect_entries![0].effect!.toLowerCase().includes(this.searchTerm.toLowerCase())));
+      itemFilter.push(...this.items.filter(item => item.effect_entries!.find(effect => effect.short_effect!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
+      itemFilter.push(...this.items.filter(item => item.effect_entries!.find(effect => effect.effect!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
 
     }
+
+    itemFilter = this.uniqBy(itemFilter, (item) => item.name as string);
 
     this.filteredItems.splice(0, this.items.length, ...itemFilter);
 
@@ -221,6 +231,8 @@ export class ItemPageComponent {
       ImageURL: new FormControl(currentItem.sprites?.default, [Validators.required]),
       ApiURL: new FormControl(`https://pokeapi.co/api/v2/item/${currentItem.name}`, [Validators.required])
     });
+
+    this.compositionClicked = compositionId;
 
   }
 
@@ -355,7 +367,22 @@ export class ItemPageComponent {
 
     if (this.searchTerm !== '') {
 
-      const buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      let buildFilter;
+
+      if (parseInt(this.searchTerm)) {
+
+        buildFilter = this.builds.filter(build => build.Id?.toString().includes(this.searchTerm.toLowerCase()));
+
+      } else {
+
+        buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        buildFilter.push(...this.builds.filter(build => build.Description?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+        buildFilter.push(...this.builds.filter(build => build.GameVersion?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+
+      }
+
+      buildFilter = this.uniqBy(buildFilter, (item) => item.Name as string);
+
       this.filteredBuilds.splice(0, this.builds.length, ...buildFilter);
       this.isSearchingBuilds = true;
 
@@ -375,16 +402,19 @@ export class ItemPageComponent {
     this.filteredCompositions.splice(0, this.compositions.length, ...compositionFilter);
     this.selectedBuild = selectedBuild;
     this.isBuildSelected = true;
+    this.buildClicked = buildId;
 
   }
 
-  private resetForms(): void {
+  protected resetForms(): void {
 
     this.selectedBuild = {};
     this.itemInfo = {};
     this.filteredCompositions = [];
     this.isSearchingBuilds = false;
     this.isBuildSelected = false;
+    this.compositionClicked = null;
+    this.buildClicked = null;
 
     this.addItemForm = new FormGroup({
       Id: new FormControl(-1),

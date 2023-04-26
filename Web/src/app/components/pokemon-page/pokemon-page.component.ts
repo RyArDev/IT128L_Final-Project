@@ -43,6 +43,9 @@ export class PokemonPageComponent {
   isSearchingBuilds: boolean = false;
   isBuildSelected: boolean = false;
 
+  compositionClicked: number | null = null;
+  buildClicked: number | null = null;
+
   constructor(
     private authToken: AuthToken,
     private pokemonAPI: PokemonAPIService,
@@ -155,6 +158,15 @@ export class PokemonPageComponent {
 
   }
 
+  private uniqBy<T>(a: T[], key: (item: T) => string | number): T[] {
+    const seen: { [key: string]: boolean } = {};
+    return a.filter((item) => {
+      const k = key(item);
+      return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+    });
+  }
+
+
   protected retrieveData() {
 
     this.isLoading = true;
@@ -195,15 +207,12 @@ export class PokemonPageComponent {
     } else {
 
       pokemonFilter = this.pokemons.filter(pokemon => pokemon.name!.toLowerCase().includes(this.searchTerm.toLowerCase()));
-
-      if (pokemonFilter.length === 0) {
-
-        pokemonFilter = this.pokemons.filter(pokemon => pokemon.types![0].type!.name!.toLowerCase().includes(this.searchTerm.toLowerCase()));
-        pokemonFilter.push(...this.pokemons.filter(pokemon => pokemon.types!.find(type => type.type!.name!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
-
-      }
+      pokemonFilter.push(...this.pokemons.filter(pokemon => pokemon.types![0].type!.name!.toLowerCase().includes(this.searchTerm.toLowerCase())));
+      pokemonFilter.push(...this.pokemons.filter(pokemon => pokemon.types!.find(type => type.type!.name!.toLowerCase().includes(this.searchTerm.toLowerCase()))));
 
     }
+
+    pokemonFilter = this.uniqBy(pokemonFilter, (item) => item.name as string);
 
     this.filteredPokemons.splice(0, this.pokemons.length, ...pokemonFilter);
 
@@ -226,6 +235,8 @@ export class PokemonPageComponent {
       ImageURL: new FormControl(currentPokemon.sprites?.front_default, [Validators.required]),
       ApiURL: new FormControl(`https://pokeapi.co/api/v2/pokemon/${currentPokemon.name}`, [Validators.required])
     });
+
+    this.compositionClicked = compositionId;
 
   }
 
@@ -360,7 +371,22 @@ export class PokemonPageComponent {
 
     if (this.searchTerm !== '') {
 
-      const buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      let buildFilter;
+
+      if (parseInt(this.searchTerm)) {
+
+        buildFilter = this.builds.filter(build => build.Id?.toString().includes(this.searchTerm.toLowerCase()));
+
+      } else {
+
+        buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        buildFilter.push(...this.builds.filter(build => build.Description?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+        buildFilter.push(...this.builds.filter(build => build.GameVersion?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+
+      }
+
+      buildFilter = this.uniqBy(buildFilter, (item) => item.Name as string);
+
       this.filteredBuilds.splice(0, this.builds.length, ...buildFilter);
       this.isSearchingBuilds = true;
 
@@ -380,16 +406,19 @@ export class PokemonPageComponent {
     this.filteredCompositions.splice(0, this.compositions.length, ...compositionFilter);
     this.selectedBuild = selectedBuild;
     this.isBuildSelected = true;
+    this.buildClicked = buildId;
 
   }
 
-  private resetForms(): void {
+  protected resetForms(): void {
 
     this.selectedBuild = {};
     this.pokemonInfo = {};
     this.filteredCompositions = [];
     this.isSearchingBuilds = false;
     this.isBuildSelected = false;
+    this.compositionClicked = null;
+    this.buildClicked = null;
 
     this.addPokemonForm = new FormGroup({
       Id: new FormControl(-1),

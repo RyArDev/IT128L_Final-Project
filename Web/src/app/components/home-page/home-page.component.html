@@ -138,7 +138,7 @@
 
     <hr class="my-5" />
 
-    <section class="text-center">
+    <section class="text-center mb-2">
       <h4 class="mb-2"><strong>Three Random Items</strong></h4>
       <p class="text-muted mb-5">
         Feeling lucky? get items to use with a randomizer that is totally not rigged!
@@ -171,7 +171,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="random-button-out">
+        <div class="random-button-out mb-5">
           <button class="btn btn-primary random-button-in" (click)="this.randomizeItems()">Randomize</button>
         </div>
       </div>
@@ -184,21 +184,24 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-title">Add Pokemon</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForms()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="addPokemonForm" autocomplete="on" novalidate (ngSubmit)="addPokemon(addPokemonForm.value)" enctype="multipart/form-data">
           <div class="row">
             <div class="col-md-12 pb-2">
               <div class="input-group mt-3">
-                <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchBuilds()" placeholder="Search by Build Name" />
+                <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchBuilds()" placeholder="Search by Build Id, Name, Game Version, or Description" />
                 <button type="button" class="btn btn-primary" id="search-btn" (click)="searchBuilds()">SEARCH</button>
               </div>
             </div>
             <div class="col-md-12 mb-4 pb-2" *ngIf="!isSearchingBuilds">
               <div class="scroll" *ngIf="builds.length !== 0">
                 <div class="list-group" *ngFor="let build of builds">
-                  <a class="list-group-item clickable btn-secondary" (click)="displayCompositionsByBuildId(build.Id!, build)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="displayCompositionsByBuildId(build.Id!, build)"
+                     [ngClass]="{'highlight': buildClicked === build.Id}"
+                     >
                     {{build.Name!.length > 24 ? build.Name!.slice(0, 24) + '...' : build.Name}} -
                     {{build.Description!.length > 30 ? build.Description!.slice(0, 30) + '...' : build.Description}}
                   </a>
@@ -211,7 +214,10 @@
             <div class="col-md-12 mb-4" *ngIf="(isSearchingBuilds || isBuildSelected) && builds.length !== 0">
               <div class="scroll" *ngIf="filteredBuilds.length != 0">
                 <div class="list-group" *ngFor="let build of filteredBuilds">
-                  <a class="list-group-item clickable btn-secondary" (click)="displayCompositionsByBuildId(build.Id!, build)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="displayCompositionsByBuildId(build.Id!, build)"
+                     [ngClass]="{'highlight': buildClicked === build.Id}"
+                     >
                     {{build.Name!.length > 24 ? build.Name!.slice(0, 24) + '...' : build.Name}} -
                     {{build.Description!.length > 30 ? build.Description!.slice(0, 30) + '...' : build.Description}}
                   </a>
@@ -229,7 +235,10 @@
               </h5>
               <div class="scroll" *ngIf="filteredCompositions.length != 0">
                 <div class="list-group" *ngFor="let composition of filteredCompositions">
-                  <a class="list-group-item clickable btn-secondary" (click)="initializeAddPokemonForm(composition.Id!, pokemonInfo)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="initializeAddPokemonForm(composition.Id!, pokemonInfo)"
+                     [ngClass]="{'highlight': compositionClicked === composition.Id}"
+                     >
                     {{composition.Name!.length > 24 ? composition.Name!.slice(0, 24) + '...' : composition.Name}} -
                     {{composition.Description!.length > 30 ? composition.Description!.slice(0, 30) + '...' : composition.Description}}
                   </a>
@@ -241,7 +250,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" (click)="resetForms()">Close</button>
             <div>
               <input class="btn btn-danger" type="submit" *ngIf="!addPokemonForm.valid" value="Add" disabled />
               <input class="btn btn-primary" type="submit" *ngIf="addPokemonForm.valid" data-bs-dismiss="modal" value="Add" />
@@ -258,21 +267,24 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-title">Add Item</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForms()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="addItemForm" autocomplete="on" novalidate (ngSubmit)="addItem(addItemForm.value)" enctype="multipart/form-data">
           <div class="row">
             <div class="col-md-12 pb-2">
               <div class="input-group mt-3">
-                <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchBuilds()" placeholder="Search by Build Name" />
+                <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchBuilds()" placeholder="Search by Build Id, Name, Game Version or Description" />
                 <button type="button" class="btn btn-primary" id="search-btn" (click)="searchBuilds()">SEARCH</button>
               </div>
             </div>
             <div class="col-md-12 mb-4 pb-2" *ngIf="!isSearchingBuilds">
               <div class="scroll" *ngIf="builds.length !== 0">
                 <div class="list-group" *ngFor="let build of builds">
-                  <a class="list-group-item clickable btn-secondary" (click)="displayCompositionsByBuildId(build.Id!, build)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="displayCompositionsByBuildId(build.Id!, build)"
+                     [ngClass]="{'highlight': buildClicked === build.Id}"
+                     >
                     {{build.Name!.length > 24 ? build.Name!.slice(0, 24) + '...' : build.Name}} -
                     {{build.Description!.length > 30 ? build.Description!.slice(0, 30) + '...' : build.Description}}
                   </a>
@@ -285,7 +297,10 @@
             <div class="col-md-12 mb-4" *ngIf="(isSearchingBuilds || isBuildSelected) && builds.length !== 0">
               <div class="scroll" *ngIf="filteredBuilds.length != 0">
                 <div class="list-group" *ngFor="let build of filteredBuilds">
-                  <a class="list-group-item clickable btn-secondary" (click)="displayCompositionsByBuildId(build.Id!, build)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="displayCompositionsByBuildId(build.Id!, build)"
+                     [ngClass]="{'highlight': buildClicked === build.Id}"
+                     >
                     {{build.Name!.length > 24 ? build.Name!.slice(0, 24) + '...' : build.Name}} -
                     {{build.Description!.length > 30 ? build.Description!.slice(0, 30) + '...' : build.Description}}
                   </a>
@@ -304,7 +319,10 @@
               </h5>
               <div class="scroll" *ngIf="filteredCompositions.length != 0">
                 <div class="list-group" *ngFor="let composition of filteredCompositions">
-                  <a class="list-group-item clickable btn-secondary" (click)="initializeAddItemForm(composition.Id!, itemInfo)">
+                  <a class="list-group-item clickable btn-secondary"
+                     (click)="initializeAddItemForm(composition.Id!, itemInfo)"
+                     [ngClass]="{'highlight': compositionClicked === composition.Id}"
+                     >
                     {{composition.Name!.length > 24 ? composition.Name!.slice(0, 24) + '...' : composition.Name}} -
                     {{composition.Description!.length > 30 ? composition.Description!.slice(0, 30) + '...' : composition.Description}}
                   </a>
@@ -316,7 +334,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" (click)="resetForms()">Close</button>
             <div>
               <input class="btn btn-danger" type="submit" *ngIf="!addItemForm.valid" value="Add" disabled />
               <input class="btn btn-primary" type="submit" *ngIf="addItemForm.valid" data-bs-dismiss="modal" value="Add" />

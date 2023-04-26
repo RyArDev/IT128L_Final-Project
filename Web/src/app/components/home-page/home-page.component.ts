@@ -47,6 +47,8 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
   selectedBuild: BuildInterface = {};
   isSearchingBuilds: boolean = false;
   isBuildSelected: boolean = false;
+  compositionClicked: number | null = null;
+  buildClicked: number | null = null;
 
   @ViewChild('bgVideo') myVideo!: ElementRef;
 
@@ -184,6 +186,14 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
 
   }
 
+  private uniqBy<T>(a: T[], key: (item: T) => string | number): T[] {
+    const seen: { [key: string]: boolean } = {};
+    return a.filter((item) => {
+      const k = key(item);
+      return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+    });
+  }
+
   private getRandomInt(randomNumber: number): number {
 
     return Math.floor(Math.random() * (randomNumber + 1));
@@ -290,6 +300,8 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
       ApiURL: new FormControl(`https://pokeapi.co/api/v2/pokemon/${currentPokemon.name}`, [Validators.required])
     });
 
+    this.compositionClicked = compositionId;
+
   }
 
   protected addPokemon = (addPokemonFormValue: any) => {
@@ -352,6 +364,8 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
       ImageURL: new FormControl(currentItem.sprites?.default, [Validators.required]),
       ApiURL: new FormControl(`https://pokeapi.co/api/v2/item/${currentItem.name}`, [Validators.required])
     });
+
+    this.compositionClicked = compositionId;
 
   }
 
@@ -486,7 +500,22 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
 
     if (this.searchTerm !== '') {
 
-      const buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      let buildFilter;
+
+      if (parseInt(this.searchTerm)) {
+
+        buildFilter = this.builds.filter(build => build.Id?.toString().includes(this.searchTerm.toLowerCase()));
+
+      } else {
+
+        buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        buildFilter.push(...this.builds.filter(build => build.Description?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+        buildFilter.push(...this.builds.filter(build => build.GameVersion?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+
+      }
+
+      buildFilter = this.uniqBy(buildFilter, (item) => item.Name as string);
+
       this.filteredBuilds.splice(0, this.builds.length, ...buildFilter);
       this.isSearchingBuilds = true;
 
@@ -506,10 +535,11 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
     this.filteredCompositions.splice(0, this.compositions.length, ...compositionFilter);
     this.selectedBuild = selectedBuild;
     this.isBuildSelected = true;
+    this.buildClicked = buildId;
 
   }
 
-  private resetForms(): void {
+  protected resetForms(): void {
 
     this.selectedBuild = {};
     this.pokemonInfo = {};
@@ -517,6 +547,8 @@ export class HomePageComponent implements OnInit, OnChanges, AfterViewInit {
     this.filteredCompositions = [];
     this.isSearchingBuilds = false;
     this.isBuildSelected = false;
+    this.compositionClicked = null;
+    this.buildClicked = null;
 
     this.addPokemonForm = new FormGroup({
       Id: new FormControl(-1),

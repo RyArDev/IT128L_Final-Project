@@ -9,7 +9,7 @@
     border: 5px solid black;
 }
 
-.scroll {
+.scroll_1 {
   overflow-x: hidden;
   overflow-y: scroll;
   height: 650px;
@@ -67,6 +67,15 @@
 .add:hover {
   color: black;
   transform: scale(1.1)
+}
+
+.fill{
+  height: 60vh;
+}
+
+.highlight {
+  background-color: dimgray;
+  color: white;
 }
 
 @media (max-width: 1750px) {

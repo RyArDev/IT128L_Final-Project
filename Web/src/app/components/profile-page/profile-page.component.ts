@@ -413,6 +413,14 @@ export class ProfilePageComponent implements OnInit, OnChanges{
     return form.get(controlName)!.hasError(errorName)
   }
 
+  private uniqBy<T>(a: T[], key: (item: T) => string | number): T[] {
+    const seen: { [key: string]: boolean } = {};
+    return a.filter((item) => {
+      const k = key(item);
+      return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+    });
+  }
+
   protected searchBuilds(): void {
 
     if (this.filteredSearchBuilds.length !== 0) {
@@ -425,7 +433,22 @@ export class ProfilePageComponent implements OnInit, OnChanges{
 
     if (this.searchTerm !== '') {
 
-      const buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      let buildFilter;
+
+      if (parseInt(this.searchTerm)) {
+
+        buildFilter = this.builds.filter(build => build.Id?.toString().includes(this.searchTerm.toLowerCase()));
+
+      } else {
+
+        buildFilter = this.builds.filter(build => build.Name?.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        buildFilter.push(...this.builds.filter(build => build.Description?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+        buildFilter.push(...this.builds.filter(build => build.GameVersion?.toLowerCase().includes(this.searchTerm.toLowerCase())));
+
+      }
+
+      buildFilter = this.uniqBy(buildFilter, (item) => item.Name as string);
+
       this.filteredSearchBuilds.splice(0, this.builds.length, ...buildFilter);
       this.isSearching = true;
 

@@ -41,3 +41,8 @@
   overflow-y: scroll;
   height: 125px;
 }
+
+.highlight {
+  background-color: dimgray;
+  color: white;
+}

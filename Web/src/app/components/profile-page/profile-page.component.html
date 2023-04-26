@@ -22,7 +22,7 @@
           <button type="button" (click)="initializeAddBuildForm()" class="btn btn-success p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#addBuildForm" style="z-index: 1;">
             NEW BUILD
           </button>
-          <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" (keydown.enter)="searchBuilds()" placeholder="Search by Build Name" />
+          <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" (keydown.enter)="searchBuilds()" placeholder="Search by Build Id, Name, Game Version, or Description" />
           <button class="btn btn-primary" id="search-btn" (click)="searchBuilds()">SEARCH</button>
         </div>
         <div class="row" *ngIf="!isSearching && builds.length !== 0">
@@ -66,7 +66,7 @@
         </div>
         <div class="row" *ngIf="isSearching && !isBuildSelected && builds.length !== 0">
           <h1 class="text-center display-3 m-3">SEARCHED BUILDS</h1>
-          <div class="scroll" *ngIf="filteredSearchBuilds.length != 0">
+          <div class="scroll_1" *ngIf="filteredSearchBuilds.length != 0">
             <div class="list-group" *ngFor="let build of filteredSearchBuilds">
               <a class="list-group-item clickable btn-secondary" (click)="getFilteredBuild(build.Id!)">
                 {{build.Name!.length > 48 ? build.Name!.slice(0, 48) + '...' : build.Name}} -
@@ -76,6 +76,7 @@
           </div>
           <div *ngIf="filteredSearchBuilds.length == 0">
             <h3 class="text-center">Build Not Found.</h3>
+            <div class="fill"></div>
           </div>
         </div>
         <div class="row" *ngIf="isBuildSelected && builds.length !== 0">
@@ -604,15 +605,6 @@
           </div>
           <div class="col-md-4 mb-4 pb-2">
             <div class="form-outline">
-              <label class="form-label" for="updatePurpose_Pokemon">Purpose</label>
-              <input type="text" id="updatePurpose_Pokemon" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
-            </div>
-            <div class="col-md-4 text-danger">
-              <em *ngIf="validateControl('Purpose', updatePokemonForm) && hasError('Purpose', 'required', updatePokemonForm)">Purpose needs to be atleast 10 characters long</em>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4 pb-2">
-            <div class="form-outline">
               <label class="form-label" for="updateImageURL_Pokemon">Image URL</label>
               <input type="text" id="updateImageURL_Pokemon" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
             </div>
@@ -627,6 +619,15 @@
             </div>
             <div class="col-md-4 text-danger">
               <em *ngIf="validateControl('ApiURL', updatePokemonForm) && hasError('ApiURL', 'required', updatePokemonForm)">Api URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-12 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePurpose_Pokemon">Purpose</label>
+              <input type="text" id="updatePurpose_Pokemon" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', updatePokemonForm) && hasError('Purpose', 'required', updatePokemonForm)">Purpose needs to be atleast 10 characters long</em>
             </div>
           </div>
         </div>
@@ -802,15 +803,6 @@
           </div>
           <div class="col-md-4 mb-4 pb-2">
             <div class="form-outline">
-              <label class="form-label" for="updatePurpose_Item">Purpose</label>
-              <input type="text" id="updatePurpose_Item" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
-            </div>
-            <div class="col-md-4 text-danger">
-              <em *ngIf="validateControl('Purpose', updateItemForm) && hasError('Purpose', 'required', updateItemForm)">Purpose needs to be atleast 10 characters long</em>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4 pb-2">
-            <div class="form-outline">
               <label class="form-label" for="updateImageURL_Item">Image URL</label>
               <input type="text" id="updateImageURL_Item" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
             </div>
@@ -825,6 +817,15 @@
             </div>
             <div class="col-md-4 text-danger">
               <em *ngIf="validateControl('ApiURL', updateItemForm) && hasError('ApiURL', 'required', updateItemForm)">Api URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-12 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePurpose_Item">Purpose</label>
+              <input type="text" id="updatePurpose_Item" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', updateItemForm) && hasError('Purpose', 'required', updateItemForm)">Purpose needs to be atleast 10 characters long</em>
             </div>
           </div>
         </div>

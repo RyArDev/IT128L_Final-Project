@@ -1,15 +1,180 @@
-<div class="build">
+<div class="build offset-lg-0">
   <app-alert-system [message]="alertMessage" [success]="alertSuccess" [error]="alertError"></app-alert-system>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 text-center">
-        <p>build-page works!</p>
+  <div class="row">
+    <div class="col-sm-6 col-md-3 comp">
+      <div class="text-center display-6 mb-3">
+        List of Compositions
+      </div>
+      <div class="list-group mt-3" *ngIf="isBuildSelected">
+        <div class="text-center mb-3">
+          From {{selectedBuild.Name}} by {{selectedUser.UserName!.length > 16 ? selectedUser.UserName!.slice(0, 16) + '...' : selectedUser.UserName}}
+        </div>
+        <div class="scroll_1">
+          <div *ngFor="let composition of filteredCompositions">
+            <ng-container *ngIf="composition.BuildId === selectedBuild.Id">
+              <a class="list-group-item clickable btn-secondary"
+                 (click)="getCompositionDetails(composition.Id!);"
+                 [ngClass]="{'highlight': compositionClicked === composition.Id}">
+                {{composition.Name!.length > 16 ? composition.Name!.slice(0, 16) + '...' : composition.Name}} -
+                {{composition.Description!.length > 36 ? composition.Description!.slice(0, 36) + '...' : composition.Description}}
+              </a>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="list-group mb-3" *ngIf="isCompositionSelected">
+        <div class="row text-center">
+          <div class="col-12 mt-3">
+            <h5 class="text-center">
+              Pokemon
+            </h5>
+            <div class="scroll_2">
+              <div class="list-group" *ngFor="let pokemon of selectedPokemons">
+                <ng-container *ngIf="pokemon.CompositionId === selectedComposition.Id">
+                  <a class="list-group-item btn-secondary clickable comp-list" (click)="viewPokemon(pokemon.Name!, pokemon.Id!)">
+                    <div class="text-capitalize position-relative">
+                      <img src="{{pokemon.ImageURL}}" class="img-fluid" width="75" />
+                      {{pokemon.Name}} - {{pokemon.Purpose!.length > 16 ? pokemon.Purpose!.slice(0, 16) + '...' : pokemon.Purpose}}
+                    </div>
+                  </a>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-3">
+            <h5 class="text-center">
+              Items
+            </h5>
+            <div class="scroll_2">
+              <div class="list-group" *ngFor="let item of selectedItems">
+                <ng-container *ngIf="item.CompositionId === selectedComposition.Id">
+                  <a class="list-group-item btn-secondary clickable comp-list" (click)="viewItem(item.Name!, item.Id!);">
+                    <div class="text-capitalize position-relative">
+                      <img src="{{item.ImageURL}}" class="img-fluid" width="75" />
+                      {{item.Name}} - {{item.Purpose!.length > 16 ? item.Purpose!.slice(0, 16) + '...' : item.Purpose}}
+                    </div>
+                  </a>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-3" *ngIf="!isCompositionSelected">
+        Please Select a Composition
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-9 builds_list mt-4">
+      <div class="input-group mt-3">
+        <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" (keydown.enter)="searchBuilds()" placeholder="Search by Build Id, Name, Game Version, or Description || User Id or Username" />
+        <button class="btn btn-primary" id="search-btn" (click)="searchBuilds()">SEARCH</button>
+      </div>
+      <div class="row pt-4">
+        <div class="col-lg-4 col-md-12 mb-4" *ngFor="let build of filteredBuilds | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index;">
+          <div class="rounded btn-secondary p-4 clickable"
+              (click)="displayCompositionsByBuildId(build.Id!, build)"
+              [ngClass]="{'highlight': buildClicked === build.Id}"
+            >
+            <div *ngFor="let user of users">
+              <ng-container *ngIf="user.Id === build.UserId">
+                <div class="text-center">
+                  <img src="{{ user.ProfilePicUrl }}" class="profile-picture" />
+                  <h3>{{user.UserName!.length > 20 ? user.UserName!.slice(0, 20) + '...' : user.UserName}}</h3>
+                </div>
+              </ng-container>
+            </div>
+            <h1 class="text-center">{{build.Name!.length > 16 ? build.Name!.slice(0, 16) + '...' : build.Name}}</h1>
+            <p>Version: {{build.GameVersion!.length > 32 ? build.GameVersion!.slice(0, 32) + '...' : build.GameVersion}}</p>
+            <p>Description: {{build.Description!.length > 32 ? build.Description!.slice(0, 32) + '...' : build.Description}}</p>
+            <p>Date Created: {{this.dateService.formatDate(build.DateCreated!)}}</p>
+            <p>Date Updated: {{this.dateService.formatDate(build.DateUpdated!)}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="mb-5" *ngIf="filteredBuilds.length > 0">
+        <div class="pagination justify-content-center ">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </div>
+        <div *ngIf="filteredBuilds.length < 6">
+          <div class="fill"></div>
+        </div>
+      </div>
+      <div class="container d-flex align-items-center justify-content-center text-center" *ngIf="filteredBuilds.length === 0">
+        <div class="row mt-5">
+          <h1 class="text-center display-3">Build Not Found.</h1>
+        </div>
+      </div>
+    </div>
+    <div class="container d-flex align-items-center justify-content-center text-center" *ngIf="this.isLoading">
+      <div class="row">
+        <h1 class="text-center display-1 m-3">Loading Builds...</h1>
       </div>
     </div>
   </div>
 </div>
 
-<jw-modal id="build-page-modal">
-  <div class="text-center"><h1 class="text-capitalize">Test Modal</h1></div>
+<jw-modal id="view-pokemon">
+  <div class="text-center"><h1 class="text-capitalize">{{this.currentViewPokemon.name}}</h1></div>
+  <div class="row">
+    <div class="col-6 text-center">
+      <img src="{{this.currentViewPokemon.sprites?.front_default}}" class="img-fluid" width="150" />
+    </div>
+    <div class="col-6">
+      <div class="text-capitalize text-center">
+        <strong class="mt-2">Type</strong>
+        <p class="p-1" *ngFor="let type of currentViewPokemon.types!">{{type.type!.name!}}</p>
+      </div>
+       
+    </div>
+  </div>
+  <div class="row">
+    <h5 class="">Abilities</h5>
+    <div class="col-md-6" *ngFor="let ability of this.currentViewPokemon.abilities!; let i = index;">
+      <p class="text-capitalize">{{i+1}}.) {{ability.ability!.name!}}</p>
+    </div>
+    <h5 class="mt-2">Stats</h5>
+    <div class="col-md-6" *ngFor="let stat of this.currentViewPokemon.stats!; let i = index;">
+      <p class="text-capitalize">{{stat.stat!.name!}}: {{stat.base_stat!}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <h5 class="mt-2">Purpose</h5>
+    <p class="">{{this.pokemon.Purpose}}</p>
+  </div>
+  <button class="btn btn-warning" (click)="modalService.close();">Close</button>
+</jw-modal>
+
+<jw-modal id="view-item">
+  <div class="text-center"><h1 class="text-capitalize">{{this.currentViewItem.name}}</h1></div>
+  <div class="row mt-2">
+    <div class="col-6 text-center">
+      <img src="{{this.currentViewItem.sprites?.default}}" class="img-fluid" width="150" />
+    </div>
+    <div class="col-6">
+      <div class="text-capitalize"><strong class="mt-2">Category: </strong> {{this.currentViewItem.category?.name!}}</div>
+      <div class="text-capitalize"><strong class="mt-2">Cost: </strong> {{this.currentViewItem.cost}} Pokédollars</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="row">
+      <div class="col-6">
+        <h5 class="mt-2">Attributes</h5>
+        <div class="col-md-12" *ngFor="let attribute of this.currentViewItem.attributes!; let i = index;">
+          <p class="text-capitalize">{{i+1}}.) {{attribute.name!}}</p>
+        </div>
+        <p *ngIf="this.currentViewItem.attributes?.length! <= 0" class="text-capitalize">1.) None</p>
+      </div>
+      <div class="col-6">
+        <h5 class="mt-2">Effects</h5>
+        <div class="col-md-12" *ngFor="let effect of this.currentViewItem.effect_entries!; let i = index;">
+          <p class="">{{effect.effect!}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <h5 class="mt-2">Purpose</h5>
+      <p class="">{{this.item.Purpose}}</p>
+    </div>
+  </div>
   <button class="btn btn-warning" (click)="modalService.close();">Close</button>
 </jw-modal>

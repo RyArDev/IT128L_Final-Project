@@ -26,6 +26,10 @@ export class PokemonService {
     return this.http.post<HttpResponse>(`${PROXY_CONFIG.target}/build/add`, build);
   }
 
+  public getAllBuilds() {
+    return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/build/all`);
+  }
+
   public getBuildByUserId(userId: number) {
     return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/build/user/${userId}`);
   }
@@ -46,6 +50,10 @@ export class PokemonService {
 
   public addComposition(composition: CompositionInterface) {
     return this.http.post<HttpResponse>(`${PROXY_CONFIG.target}/composition/add`, composition);
+  }
+
+  public getAllCompositions() {
+    return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/composition/all`);
   }
 
   public getCompositionByBuildId(buildId: number) {
@@ -70,6 +78,10 @@ export class PokemonService {
     return this.http.post<HttpResponse>(`${PROXY_CONFIG.target}/pokemon/add`, pokemon);
   }
 
+  public getAllPokemon() {
+    return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/pokemon/all`);
+  }
+
   public getPokemonByCompositionId(compositionId: number) {
     return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/pokemon/composition/${compositionId}`);
   }
@@ -90,6 +102,10 @@ export class PokemonService {
 
   public addItem(item: ItemInterface) {
     return this.http.post<HttpResponse>(`${PROXY_CONFIG.target}/item/add`, item);
+  }
+
+  public getAllItems() {
+    return this.http.get<HttpResponse>(`${PROXY_CONFIG.target}/item/all`);
   }
 
   public getItemsByCompositionId(compositionId: number) {

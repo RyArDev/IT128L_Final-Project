@@ -68,6 +68,11 @@
   padding-right: 128px;
 }
 
+.highlight {
+  background-color: dimgray;
+  color: white;
+}
+
 @media (max-width: 1200px) {
 }
 
