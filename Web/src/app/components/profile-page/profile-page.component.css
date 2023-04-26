@@ -1,5 +1,5 @@
 .profile-page{
-    height: 100vh;
+    height: inherit;
 }
 
 .profile-picture {
@@ -9,7 +9,84 @@
     border: 5px solid black;
 }
 
-@media (max-width: 1200px) {
+.scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 650px;
+}
+
+.scroll_2 {
+  background-color: #E2E3E4;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 200px;
+}
+
+.scroll_3 {
+  background-color: #E2E3E4;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 500px;
+}
+
+.scroll_4 {
+  background-color: #E2E3E4;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 375px;
+}
+
+.clickable:hover{
+  cursor:pointer;
+}
+
+.delete-icon {
+  margin-top: 5%;
+  margin-left: 15%;
+}
+
+.delete{
+  width: 32px;
+  border-radius: 50%;
+}
+
+.delete:hover {
+  color: black;
+  transform: scale(1.1)
+}
+
+.add-icon {
+  margin-left: 5px;
+}
+
+.add {
+  width: 32px;
+  border-radius: 50%;
+}
+
+.add:hover {
+  color: black;
+  transform: scale(1.1)
+}
+
+@media (max-width: 1750px) {
+  .delete-icon {
+    margin-left: 5%;
+  }
+
+  .comp-list {
+    text-align: center;
+  }
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 125px;
 }
 
 @media (max-width: 1024px) {

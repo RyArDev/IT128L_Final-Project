@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="a2e8bff1-02b9-4eed-b053-d9260cfece16" ChangeDateTime="04/22/2023 13:32:42">
+    <Property Name="ElementName" Value="[dbo].[Items].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Items]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="cdf899c2-3a16-426b-ae24-985ca983dcf8" ChangeDateTime="04/22/2023 13:32:54">
+    <Property Name="ElementName" Value="[dbo].[Pokemon].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Pokemon]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2085e76c-4b37-45d0-8b84-99a2f9f739a3" ChangeDateTime="04/24/2023 18:22:51">
+    <Property Name="ElementName" Value="[dbo].[Pokemon].[URL]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Pokemon]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ApiURL" />
+  </Operation>
+</Operations>

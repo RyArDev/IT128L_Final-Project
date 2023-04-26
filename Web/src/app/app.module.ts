@@ -20,6 +20,7 @@ import { PokemonPageComponent } from './components/pokemon-page/pokemon-page.com
 import { ItemPageComponent } from './components/item-page/item-page.component';
 import { BuildPageComponent } from './components/build-page/build-page.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     AlertSystemComponent,
     PokemonPageComponent,
     ItemPageComponent,
-    BuildPageComponent
+    BuildPageComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
@@ -75,10 +77,48 @@ export class AppModule { }
 
 /* PokeAPI - https://pokeapi.co/docs/v2
 
-Wrapper Libraries
-Node Server-side with auto caching: Pokedex Promise v2 by Thomas Asadurian and Alessandro Pezzé - https://github.com/PokeAPI/pokedex-promise-v2
-Browser-side with auto caching: pokeapi-js-wrapper by Alessandro Pezzé - https://github.com/PokeAPI/pokeapi-js-wrapper
 .NET (C#, VB, etc): PokeApi.NET by PoroCYon - https://github.com/mtrdp642/PokeApiNet
-Typescript with auto caching: Pokenode-ts by Gabb-c - https://github.com/Gabb-c/pokenode-ts
 
+Data Structure Example
+  Build#1
+    ->Composition/Team#1
+      -> Pokemon
+      -> Items
+    ->Composition/Team#1
+      -> Pokemon
+      -> Items
+  Build#2
+    ->Composition/Team#1
+      -> Pokemon
+      -> Items
+    ->Composition/Team#1
+      -> Pokemon
+      -> Items
+
+Database Structure
+  Builds
+    -ID
+    -UserID
+    -Name
+    -GameVersion
+    -Description
+    -DateCreated
+  Compositions
+    -ID
+    -BuildID
+    -Name
+    -Description
+    -DateCreated
+  Pokemon
+    -ID
+    -PokeID (Pokemon ID from PokeAPI)
+    -CompositionID
+    -Name
+    -URL
+  Items
+    -ID
+    -PokeID (Item ID from PokeAPI)
+    -CompositionID
+    -Name
+    -URL
 */

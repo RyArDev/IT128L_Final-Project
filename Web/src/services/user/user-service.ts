@@ -8,11 +8,12 @@ import { UserLogin } from '../../models/user/user-login';
 import { UserRegistration } from '../../models/user/user-registration';
 import { UserRefresh } from '../../models/user/user-refresh';
 import { UserUpdate } from '../../models/user/user-update';
+import { PokemonService } from '../pokemon/pokemon-service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  constructor(private http: HttpClient, private authToken: AuthToken) { }
+  constructor(private http: HttpClient, private authToken: AuthToken, private pokemonService: PokemonService) { }
 
   public register(user: UserRegistration) {
     return this.http.post<HttpResponse>(`${PROXY_CONFIG.target}/user/register`, user);
@@ -42,6 +43,7 @@ export class UserService {
 
     this.authToken.removeUser();
     this.authToken.isUserLoggedIn.next(false);
+    this.pokemonService.isProfileInitialized.next(false);
 
   }
 

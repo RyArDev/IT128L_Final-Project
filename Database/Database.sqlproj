@@ -61,6 +61,8 @@
     <Folder Include="Stored Procedures\Users" />
     <Folder Include="Stored Procedures\Pokemon" />
     <Folder Include="Stored Procedures\Items" />
+    <Folder Include="Stored Procedures\Builds" />
+    <Folder Include="Stored Procedures\Compositions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Users.sql" />
@@ -73,9 +75,50 @@
     <Build Include="Stored Procedures\Users\spUsers_GetById.sql" />
     <Build Include="dbo\Tables\Pokemon.sql" />
     <Build Include="dbo\Tables\Items.sql" />
+    <Build Include="dbo\Tables\Compositions.sql" />
+    <Build Include="dbo\Tables\Builds.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_GetAll.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_GetById.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_UpdateById.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_UpdateByCompId.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_GetByCompId.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_DeleteById.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_DeleteByCompId.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_Add.sql" />
+    <Build Include="Stored Procedures\Items\spItems_UpdateById.sql" />
+    <Build Include="Stored Procedures\Items\spItems_UpdateByCompId.sql" />
+    <Build Include="Stored Procedures\Items\spItems_GetById.sql" />
+    <Build Include="Stored Procedures\Items\spItems_GetByCompId.sql" />
+    <Build Include="Stored Procedures\Items\spItems_GetAll.sql" />
+    <Build Include="Stored Procedures\Items\spItems_DeleteById.sql" />
+    <Build Include="Stored Procedures\Items\spItems_DeleteByCompId.sql" />
+    <Build Include="Stored Procedures\Items\spItems_Add.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_UpdateById.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_GetById.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_GetAll.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_DeleteById.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_Add.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_DeleteByUserId.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_GetByUserId.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_UpdateByUserId.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_UpdateByBuildId.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_UpdateById.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_GetByBuildId.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_GetById.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_GetAll.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_DeleteByBuildId.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_DeleteById.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_Add.sql" />
+    <Build Include="Stored Procedures\Builds\spBuilds_VerifyByUserId.sql" />
+    <Build Include="Stored Procedures\Compositions\spCompositions_VerifyByBuildId.sql" />
+    <Build Include="Stored Procedures\Pokemon\spPokemon_VerifyByCompId.sql" />
+    <Build Include="Stored Procedures\Items\spItems_VerifyByCompId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\scrUsers_Add.sql" />
     <None Include="Database.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
 </Project>

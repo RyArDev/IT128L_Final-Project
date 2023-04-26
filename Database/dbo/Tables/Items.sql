@@ -1,4 +1,11 @@
 ﻿CREATE TABLE [dbo].[Items]
 (
-	[Id] INT NOT NULL PRIMARY KEY
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [PokeId] INT NOT NULL, 
+    [CompositionId] INT NOT NULL, 
+    [Name] NVARCHAR(MAX) NOT NULL, 
+    [Purpose] NVARCHAR(MAX) NOT NULL,  
+    [ImageURL] NVARCHAR(MAX) NOT NULL,
+    [ApiURL] NVARCHAR(MAX) NOT NULL,
+    CONSTRAINT [FK_Item_CompId] FOREIGN KEY ([CompositionId]) REFERENCES [Compositions]([Id])
 )

@@ -35,8 +35,39 @@ Step 3: Configure Startup Projects
 
 Step 4: In your Git Bash terminal go to the directory of the Web project then type:
 
-```Git Bash Terminal
+``` Git Bash Terminal
 npm start
+```
+
+Wait for the terminal to completely display this output:
+
+``` Git Bash Terminal
+npm start
+
+> web@0.0.0 prestart
+> node aspnetcore-https
+
+
+> web@0.0.0 start
+> ng serve --ssl --ssl-cert https\%npm_package_name%.pem --ssl-key https\%npm_package_name%.key
+
+✔ Browser application bundle generation complete.
+
+Initial Chunk Files   | Names         |  Raw Size
+vendor.js             | vendor        |   2.50 MB |
+styles.css, styles.js | styles        | 399.43 kB |
+main.js               | main          | 339.33 kB |
+polyfills.js          | polyfills     | 314.26 kB |
+runtime.js            | runtime       |   6.50 kB |
+
+                      | Initial Total |   3.53 MB
+
+Build at: 2023-04-24T18:31:27.150Z - Hash: e8c6359e14c303a9 - Time: 27797ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on https://localhost:4200/ **
+
+
+√ Compiled successfully.
 ```
 
 -----

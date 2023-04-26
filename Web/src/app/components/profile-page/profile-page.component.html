@@ -1,9 +1,9 @@
 <div class="profile-page">
-  <div class="container" *ngIf="isUserLoggedIn">
+  <div class="p-5" *ngIf="isUserLoggedIn">
     <app-alert-system [message]="alertMessage" [success]="alertSuccess" [error]="alertError"></app-alert-system>
-    <div class="row p-5">
-      <h1 class="text-center display-1 m-3">PROFILE</h1>
-      <div class="col-md-12 text-center">
+    <div class="row mb-5">
+      <div class="col-md-4 text-center">
+        <h1 class="text-center display-1 m-3">PROFILE</h1>
         <img src="{{ user.ProfilePicUrl }}" class="profile-picture" />
         <div class="mt-5">
           <p>Username: {{user.UserName}}</p>
@@ -11,11 +11,168 @@
           <p>Last Name: {{user.LastName}}</p>
           <p>Email: {{user.Email}}</p>
         </div>
+        <div>
+          <button type="button" (click)="initializeUpdateForm()" class="btn btn-dark p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateForm" style="z-index: 1;">
+            EDIT PROFILE
+          </button>
+        </div>
       </div>
-      <div class="col-md-12 text-center">
-        <button type="button" (click)="initializeUpdateForm()" class="btn btn-dark" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateForm" style="z-index: 1;">
-          Edit profile
-        </button>
+      <div class="col-md-8">
+        <div class="input-group mt-3">
+          <button type="button" (click)="initializeAddBuildForm()" class="btn btn-success p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#addBuildForm" style="z-index: 1;">
+            NEW BUILD
+          </button>
+          <input type="text" class="form-control" id="search-input" [(ngModel)]="searchTerm" (keydown.enter)="searchBuilds()" placeholder="Search by Build Name" />
+          <button class="btn btn-primary" id="search-btn" (click)="searchBuilds()">SEARCH</button>
+        </div>
+        <div class="row" *ngIf="!isSearching && builds.length !== 0">
+          <h1 class="text-center display-3 m-3">LATEST UPDATED BUILD</h1>
+          <div class="col-md-4">
+            <h1>{{latestBuild.Name!.length > 16 ? latestBuild.Name!.slice(0, 16) + '...' : latestBuild.Name}}</h1>
+            <p>Version: {{latestBuild.GameVersion!.length > 24 ? latestBuild.GameVersion!.slice(0, 24) + '...' : latestBuild.GameVersion}}</p>
+            <p>Description: {{latestBuild.Description!.length > 24 ? latestBuild.Description!.slice(0, 24) + '...' : latestBuild.Description}}</p>
+            <p>Date Created: {{this.dateService.formatDate(latestBuild.DateCreated!)}}</p>
+            <p>Date Updated: {{this.dateService.formatDate(latestBuild.DateUpdated!)}}</p>
+            <div class="d-flex justify-content-center align-content-center">
+              <button type="button" (click)="initializeUpdateBuildForm(
+                      latestBuild.Id!,
+                      latestBuild.UserId!,
+                      latestBuild.Name!,
+                      latestBuild.GameVersion!,
+                      latestBuild.Description!)"
+                      class="btn btn-warning p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateBuildForm" style="z-index: 1;">
+                UPDATE BUILD
+              </button>
+              <button type="button" (click)="deleteBuild(latestBuild.Id!, latestBuild.UserId!)" class="btn btn-danger p-3 ms-5" style="z-index: 1;">
+                DELETE BUILD
+              </button>
+            </div>
+          </div>
+          <div class="col-md-8 text-center mb-5">
+            <div class="list-group mb-5">
+              <div class="scroll_3">
+                <div *ngFor="let composition of compositions">
+                  <ng-container *ngIf="composition.BuildId === latestBuild.Id">
+                    <a class="list-group-item clickable btn-secondary" (click)="getCompositionDetails(composition.Id!); modalService.open('composition-profile-modal');">
+                      {{composition.Name!.length > 32 ? composition.Name!.slice(0, 32) + '...' : composition.Name}} -
+                      {{composition.Description!.length > 32 ? composition.Description!.slice(0, 32) + '...' : composition.Description}}
+                    </a>
+                  </ng-container>
+                </div>
+              </div>
+              <a class="list-group-item clickable btn-primary" (click)="initializeAddCompositionForm(latestBuild.Id!)" data-bs-toggle="modal" data-bs-target="#addCompositionForm">Add a new composition</a>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="isSearching && !isBuildSelected && builds.length !== 0">
+          <h1 class="text-center display-3 m-3">SEARCHED BUILDS</h1>
+          <div class="scroll" *ngIf="filteredSearchBuilds.length != 0">
+            <div class="list-group" *ngFor="let build of filteredSearchBuilds">
+              <a class="list-group-item clickable btn-secondary" (click)="getFilteredBuild(build.Id!)">
+                {{build.Name!.length > 48 ? build.Name!.slice(0, 48) + '...' : build.Name}} -
+                {{build.Description!.length > 72 ? build.Description!.slice(0, 72) + '...' : build.Description}}
+              </a>
+            </div>
+          </div>
+          <div *ngIf="filteredSearchBuilds.length == 0">
+            <h3 class="text-center">Build Not Found.</h3>
+          </div>
+        </div>
+        <div class="row" *ngIf="isBuildSelected && builds.length !== 0">
+          <h1 class="text-center display-3 m-3">{{filteredSearchBuilds[0].Name!.length > 16 ? filteredSearchBuilds[0].Name!.slice(0, 16) + '...' : filteredSearchBuilds[0].Name}}</h1>
+          <div class="col-md-4">
+            <p>Version: {{filteredSearchBuilds[0].GameVersion!.length > 24 ? filteredSearchBuilds[0].GameVersion!.slice(0, 24) + '...' : filteredSearchBuilds[0].GameVersion}}</p>
+            <p>Description: {{filteredSearchBuilds[0].Description!.length > 24 ? filteredSearchBuilds[0].Description!.slice(0, 24) + '...' : filteredSearchBuilds[0].Description}}</p>
+            <p>Date Created: {{this.dateService.formatDate(filteredSearchBuilds[0].DateCreated!)}}</p>
+            <p>Date Updated: {{this.dateService.formatDate(filteredSearchBuilds[0].DateUpdated!)}}</p>
+            <div class="d-flex justify-content-center align-content-center">
+              <button type="button" (click)="initializeUpdateBuildForm(
+                      filteredSearchBuilds[0].Id!,
+                      filteredSearchBuilds[0].UserId!,
+                      filteredSearchBuilds[0].Name!,
+                      filteredSearchBuilds[0].GameVersion!,
+                      filteredSearchBuilds[0].Description!
+                      )"
+                      class="btn btn-warning p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateBuildForm" style="z-index: 1;">
+                UPDATE BUILD
+              </button>
+              <button type="button" (click)="deleteBuild(filteredSearchBuilds[0].Id!, filteredSearchBuilds[0].UserId!)" class="btn btn-danger p-3 ms-5" style="z-index: 1;">
+                DELETE BUILD
+              </button>
+            </div>
+          </div>
+          <div class="col-md-8 text-center mb-5">
+            <div class="list-group mb-5">
+              <div class="scroll_3">
+                <div *ngFor="let composition of compositions">
+                  <ng-container *ngIf="composition.BuildId === filteredSearchBuilds[0].Id">
+                    <a class="list-group-item clickable btn-secondary" (click)="getCompositionDetails(composition.Id!); modalService.open('composition-profile-modal');">
+                      {{composition.Name!.length > 32 ? composition.Name!.slice(0, 32) + '...' : composition.Name}} -
+                      {{composition.Description!.length > 32 ? composition.Description!.slice(0, 32) + '...' : composition.Description}}
+                    </a>
+                  </ng-container>
+                </div>
+              </div>
+              <a class="list-group-item clickable btn-primary" (click)="initializeAddCompositionForm(filteredSearchBuilds[0].Id!)" data-bs-toggle="modal" data-bs-target="#addCompositionForm">Add a new composition</a>
+            </div>
+          </div>
+        </div>
+        <div class="row ps-5 pe-5 mt-2" *ngIf="builds.length === 0">
+          <div class="col-md-12 mt-5 text-center">
+            <h1>Click the NEW BUILD button to start!</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <div class="text-center text-light bg-dark">
+      <h1 class="display-1 p-5">ALL BUILDS</h1>
+    </div>
+  </div>
+  <div class="p-5">
+    <div class="row ps-5 mt-2" *ngIf="filteredBuilds.length != 0">
+      <div class="col-md-4 mt-5 mb-5" *ngFor="let build of filteredBuilds | paginate: { itemsPerPage: 3, currentPage: p }">
+        <h1 class="text-center">{{build.Name!.length > 24 ? build.Name!.slice(0, 24) + '...' : build.Name}}</h1>
+        <p>Version: {{build.GameVersion!.length > 48 ? build.GameVersion!.slice(0, 48) + '...' : build.GameVersion}}</p>
+        <p>Description: {{build.Description!.length > 48 ? build.Description!.slice(0, 48) + '...' : build.Description}}</p>
+        <p>Date Created: {{this.dateService.formatDate(build.DateCreated!)}}</p>
+        <p>Date Updated: {{this.dateService.formatDate(build.DateUpdated!)}}</p>
+        <div class="list-group mt-3 mb-3">
+          <div class="scroll_2">
+            <div *ngFor="let composition of compositions">
+              <ng-container *ngIf="composition.BuildId === build.Id">
+                <a class="list-group-item clickable btn-secondary" (click)="getCompositionDetails(composition.Id!); modalService.open('composition-profile-modal');">
+                  {{composition.Name!.length > 16 ? composition.Name!.slice(0, 16) + '...' : composition.Name}} -
+                  {{composition.Description!.length > 36 ? composition.Description!.slice(0, 36) + '...' : composition.Description}}
+                </a>
+              </ng-container>
+            </div>
+          </div>
+          <a class="list-group-item clickable btn-primary" (click)="initializeAddCompositionForm(build.Id!)" data-bs-toggle="modal" data-bs-target="#addCompositionForm">Add a new composition</a>
+        </div>
+        <div class="d-flex justify-content-center align-content-center">
+          <button type="button" (click)="initializeUpdateBuildForm(
+                  build.Id!,
+                  build.UserId!,
+                  build.Name!,
+                  build.GameVersion!,
+                  build.Description!)"
+                  class="btn btn-warning p-3" data-mdb-ripple-color="dark" data-bs-toggle="modal" data-bs-target="#updateBuildForm" style="z-index: 1;">
+            UPDATE BUILD
+          </button>
+          <button type="button" (click)="deleteBuild(build.Id!, build.UserId!)" class="btn btn-danger p-3 ms-5" style="z-index: 1;">
+            DELETE BUILD
+          </button>
+        </div>
+      </div>
+      <div class="pagination justify-content-center mt-5">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>
+    </div>
+    <div class="row ps-5 pe-5 mt-2" *ngIf="builds.length == 0">
+      <div class="col-md-12 mt-5 text-center">
+        <h1>Click the NEW BUILD button to start!</h1>
       </div>
     </div>
   </div>
@@ -23,6 +180,820 @@
     <div class="row">
       <h1 class="text-center display-1 m-3">User Not Found!</h1>
       <h3 class="text-center">Please <a href="/login">login</a> to continue.</h3>
+    </div>
+  </div>
+</div>
+
+<jw-modal id="composition-profile-modal">
+  <div class="row text-center">
+    <h1 class="text-capitalize">
+      {{currentComposition.Name!.length > 24 ? currentComposition.Name!.slice(0, 24) + '...' : currentComposition.Name}}
+    </h1>
+  </div>
+  <div class="mt-3">
+    <div class="row mt-2">
+      <p class="text-center">
+        {{currentComposition.Description!.length > 48 ? currentComposition.Description!.slice(0, 48) + '...' : currentComposition.Description}}
+      </p>
+      <p class="">Date Created: {{this.dateService.formatDate(currentComposition.DateCreated!)}}</p>
+      <p class="">Date Updated: {{this.dateService.formatDate(currentComposition.DateUpdated!)}}</p>
+    </div>
+
+
+    <div class="row mb-4" *ngIf="
+         !isCompositionUpdate &&
+         !isPokemonAdd &&
+         !isPokemonView &&
+         !isPokemonUpdate &&
+         !isItemAdd &&
+         !isItemView &&
+         !isItemUpdate
+      ">
+      <div class="col-md-6">
+        <h5 class="mt-2 text-center">
+          Pokemon
+          <span class="add-icon clickable" (click)="isPokemonAdd = true;">
+            <img src="../../../assets/components/profile-page/add.png" class="add" />
+          </span>
+        </h5>
+        <div class="scroll_4">
+          <div class="list-group" *ngFor="let pokemon of pokemons">
+            <ng-container *ngIf="pokemon.CompositionId === currentComposition.Id">
+              <a class="list-group-item btn-secondary clickable comp-list" (click)="viewPokemon(pokemon.Name!, pokemon.Id!)">
+                <div class="text-capitalize position-relative">
+                  <img src="{{pokemon.ImageURL}}" class="img-fluid" width="75" />
+                  {{pokemon.Name}}
+                <p>- {{pokemon.Purpose!.length > 32 ? pokemon.Purpose!.slice(0, 32) + '...' : pokemon.Purpose}}</p>
+                  <span class="delete-icon position-absolute top-0 end-0" (click)="deletePokemon($event, pokemon.Id!, pokemon.CompositionId!);">
+                    <img src="../../../assets/components/profile-page/delete.png" class="delete" />
+                  </span>
+                </div>
+              </a>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h5 class="mt-2 text-center">
+          Items
+          <span class="add-icon clickable" (click)="isItemAdd = true;">
+            <img src="../../../assets/components/profile-page/add.png" class="add" />
+          </span>
+        </h5>
+        <div class="scroll_4">
+          <div class="list-group" *ngFor="let item of items">
+            <ng-container *ngIf="item.CompositionId === currentComposition.Id">
+              <a class="list-group-item btn-secondary clickable comp-list" (click)="viewItem(item.Name!, item.Id!);">
+                <div class="text-capitalize position-relative">
+                  <img src="{{item.ImageURL}}" class="img-fluid" width="75" />
+                  {{item.Name}}
+                <p>- {{item.Purpose!.length > 32 ? item.Purpose!.slice(0, 32) + '...' : item.Purpose}}</p>
+                  <span class="delete-icon position-absolute top-0 end-0" (click)="deleteItem($event, item.Id!, item.CompositionId!);">
+                    <img src="../../../assets/components/profile-page/delete.png" class="delete" />
+                  </span>
+                </div>
+              </a>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row text-center" *ngIf="
+       !isCompositionUpdate &&
+       !isPokemonAdd &&
+       !isPokemonView &&
+       !isPokemonUpdate &&
+       !isItemAdd &&
+       !isItemView &&
+       !isItemUpdate
+    ">
+    <div class="col-4">
+      <button type="button" (click)="initializeUpdateCompositionForm(
+                      currentComposition.Id!,
+                      currentComposition.BuildId!,
+                      currentComposition.Name!,
+                      currentComposition.Description!)"
+              class="btn btn-warning p-3" style="z-index: 1;">
+        UPDATE
+      </button>
+    </div>
+    <div class="col-4">
+      <button type="button" (click)="deleteComposition(currentComposition.Id!, currentComposition.BuildId!, false); modalService.close();" class="btn btn-danger p-3" style="z-index: 1;">
+        DELETE
+      </button>
+    </div>
+    <div class="col-4">
+      <button class="btn btn-secondary p-3" (click)="modalService.close();">CLOSE</button>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="
+       isPokemonView &&
+       !isCompositionUpdate &&
+       !isPokemonAdd &&
+       !isPokemonUpdate &&
+       !isItemAdd &&
+       !isItemView &&
+       !isItemUpdate
+    ">
+    <div class="text-center"><h1 class="text-capitalize">{{this.currentViewPokemon.name}}</h1></div>
+    <div class="row">
+      <div class="col-6 text-center">
+        <img src="{{this.currentViewPokemon.sprites?.front_default}}" class="img-fluid" width="150" />
+      </div>
+      <div class="col-6">
+        <p class="">Purpose: {{this.pokemon.Purpose}}</p>
+        <p>Type: <span class="text-capitalize" *ngFor="let type of currentViewPokemon.types!">{{type.type!.name!}} </span></p>
+      </div>
+    </div>
+    <div class="row">
+      <h5 class="">Abilities</h5>
+      <div class="col-md-6" *ngFor="let ability of this.currentViewPokemon.abilities!; let i = index;">
+        <p class="text-capitalize">{{i+1}}.) {{ability.ability!.name!}}</p>
+      </div>
+      <h5 class="mt-2">Stats</h5>
+      <div class="col-md-6" *ngFor="let stat of this.currentViewPokemon.stats!; let i = index;">
+        <p class="text-capitalize">{{stat.stat!.name!}}: {{stat.base_stat!}}</p>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-6">
+        <button type="button" class="btn btn-primary p-3" (click)="isPokemonView = false">BACK</button>
+      </div>
+      <div class="col-6">
+        <button type="button" (click)="initializeUpdatePokemonForm(
+                      pokemon.Id!,
+                      pokemon.PokeId!,
+                      pokemon.CompositionId!,
+                      pokemon.Name!,
+                      pokemon.Purpose!,
+                      pokemon.ImageURL!,
+                      pokemon.ApiURL!)"
+                class="btn btn-warning p-3" style="z-index: 1;">
+          UPDATE POKEMON
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row" *ngIf="
+       isItemView &&
+       !isCompositionUpdate &&
+       !isPokemonAdd &&
+       !isPokemonUpdate &&
+       !isItemAdd &&
+       !isPokemonView &&
+       !isItemUpdate
+    ">
+    <div class="text-center"><h1 class="text-capitalize">{{this.currentViewItem.name}}</h1></div>
+    <div class="row mt-2">
+      <div class="col-6 text-center">
+        <img src="{{this.currentViewItem.sprites?.default}}" class="img-fluid" width="150" />
+      </div>
+      <div class="col-6">
+        <p class="">Purpose: {{this.item.Purpose}}</p>
+        <p class="text-capitalize">Category: {{this.currentViewItem.category?.name!}}</p>
+        <p class="text-capitalize">Cost: {{this.currentViewItem.cost}} Pokédollars</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row">
+        <div class="col-6">
+          <h5 class="mt-2">Attributes</h5>
+          <div class="col-md-12" *ngFor="let attribute of this.currentViewItem.attributes!; let i = index;">
+            <p class="text-capitalize">{{i+1}}.) {{attribute.name!}}</p>
+          </div>
+          <p *ngIf="this.currentViewItem.attributes?.length! <= 0" class="text-capitalize">1.) None</p>
+        </div>
+        <div class="col-6">
+          <h5 class="mt-2">Effects</h5>
+          <div class="col-md-12" *ngFor="let effect of this.currentViewItem.effect_entries!; let i = index;">
+            <p class="">{{effect.effect!}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-6">
+        <button type="button" class="btn btn-primary p-3" (click)="isItemView = false">BACK</button>
+      </div>
+      <div class="col-6">
+        <button type="button" (click)="initializeUpdateItemForm(
+                      item.Id!,
+                      item.PokeId!,
+                      item.CompositionId!,
+                      item.Name!,
+                      item.Purpose!,
+                      item.ImageURL!,
+                      item.ApiURL!)"
+                class="btn btn-warning p-3" style="z-index: 1;">
+          UPDATE ITEM
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-content mt-2" *ngIf="isCompositionUpdate">
+    <div class="modal-header">
+      <h5 class="modal-title mb-4 pb-2" id="modal-title">Update Composition</h5>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="updateCompositionForm" autocomplete="on" novalidate (ngSubmit)="updateComposition(updateCompositionForm.value)" enctype="multipart/form-data">
+        <div class="row">
+          <div class="col-md-6 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="CompositionID">Composition ID</label>
+              <input type="text" id="updateID_Composition" formControlName="Id" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+          </div>
+          <div class="col-md-6 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="BuildId">Build ID</label>
+              <input type="text" id="updateBuildID_Composition" formControlName="BuildId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+          </div>
+          <div class="col-md-12 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addName_Composition">Name</label>
+              <input type="text" id="updateName_Composition" formControlName="Name" class="form-control form-control-lg" placeholder="Composition #..." />
+            </div>
+            <div class="col-md-12 text-danger">
+              <em *ngIf="validateControl('Name', updateCompositionForm) && hasError('Name', 'required', updateCompositionForm)">Name is required and at least 4 chracters long</em>
+            </div>
+          </div>
+          <div class="col-md-12 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addDescription_Composition">Description</label>
+              <input type="text" id="updateDescription_Composition" formControlName="Description" class="form-control form-control-lg" placeholder="This composition is for..." />
+            </div>
+            <div class="col-md-12 text-danger">
+              <em *ngIf="validateControl('Description', updateCompositionForm) && hasError('Description', 'required', updateCompositionForm)">Description is required and at least 10 chracters long</em>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary me-3" (click)="isCompositionUpdate = false" aria-label="Close">Close Form</button>
+          <div>
+            <input class="btn btn-danger" type="submit" *ngIf="!updateCompositionForm.valid" value="Update Composition" disabled />
+            <input class="btn btn-primary" type="submit" *ngIf="updateCompositionForm.valid" value="Update Composition" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="modal-content mt-2" *ngIf="isPokemonAdd">
+    <div class="modal-header">
+      <h5 class="modal-title mb-4 pb-2" id="modal-title">Add Pokemon</h5>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="addPokemonForm" autocomplete="on" novalidate (ngSubmit)="addPokemon(addPokemonForm.value)" enctype="multipart/form-data">
+        <div class="row" *ngIf="isPokemonConfirmed">
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addPokeID_Pokemon">PokeAPI ID</label>
+              <input type="text" id="addPokeID_Pokemon" formControlName="PokeId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('PokeId', addPokemonForm) && hasError('PokeId', 'required', addPokemonForm)">Poke ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addCompositionID_Pokemon">Composition ID</label>
+              <input type="text" id="addCompositionID_Pokemon" formControlName="CompositionId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('CompositionId', addPokemonForm) && hasError('CompositionId', 'required', addPokemonForm)">Composition ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addName_Pokemon">Name</label>
+              <input type="text" id="addName_Pokemon" formControlName="Name" class="form-control form-control-lg" placeholder="Not Selected" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Name', addPokemonForm) && hasError('Name', 'required', addPokemonForm)">Name is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addPurpose_Pokemon">Purpose</label>
+              <input type="text" id="addPurpose_Pokemon" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', addPokemonForm) && hasError('Purpose', 'required', addPokemonForm)">Purpose is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addImageURL_Pokemon">Image URL</label>
+              <input type="text" id="addImageURL_Pokemon" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ImageURL', addPokemonForm) && hasError('ImageURL', 'required', addPokemonForm)">Image URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addApiURL_Pokemon">API URL</label>
+              <input type="text" id="addApiURL_Pokemon" formControlName="ApiURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ApiURL', addPokemonForm) && hasError('ApiURL', 'required', addPokemonForm)">Api URL is invalid</em>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="!isPokemonConfirmed">
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" id="search-pokemon-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchPokemon()" placeholder="Search by Pokemon Name or ID" />
+            <button type="button" class="btn btn-primary" id="search-pokemon-btn" (click)="searchPokemon()">SEARCH</button>
+          </div>
+          <div class="mb-5 mt-5" *ngIf="currentSearchPokemon.id! === undefined">
+            <h3 class="text-center">Pokemon Not Found</h3>
+          </div>
+          <div *ngIf="currentSearchPokemon.id! > 0">
+            <div class="">
+              <div class="text-center"><h1 class="text-capitalize">{{this.currentSearchPokemon.name}}</h1></div>
+              <div class="row">
+                <div class="col-6 text-center">
+                  <img src="{{this.currentSearchPokemon.sprites?.front_default}}" class="img-fluid" width="150" />
+                </div>
+                <div class="col-6">
+                  <p class="">Base Experience: {{this.currentSearchPokemon.base_experience}}</p>
+                  <p class="">Height: {{(this.currentSearchPokemon.height! / 10)}}m</p>
+                  <p class="">Weight: {{(this.currentSearchPokemon.weight! / 10)}}kg</p>
+                </div>
+              </div>
+              <div class="row">
+                <h5 class="">Abilities</h5>
+                <div class="col-md-6" *ngFor="let ability of this.currentSearchPokemon.abilities!; let i = index;">
+                  <p class="text-capitalize">{{i+1}}.) {{ability.ability!.name!}}</p>
+                </div>
+                <h5 class="mt-2">Stats</h5>
+                <div class="col-md-6" *ngFor="let stat of this.currentSearchPokemon.stats!; let i = index;">
+                  <p class="text-capitalize">{{stat.stat!.name!}}: {{stat.base_stat!}}</p>
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="button" class="btn btn-primary" (click)="initializeAddPokemonForm(currentComposition.Id!, currentSearchPokemon)">SELECT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary me-3" (click)="resetPokemonAddForm()" aria-label="Close">Close Form</button>
+          <div>
+            <input class="btn btn-danger" type="submit" *ngIf="!addPokemonForm.valid" value="Add Pokemon" disabled />
+            <input class="btn btn-primary" type="submit" *ngIf="addPokemonForm.valid" value="Add Pokemon" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="modal-content mt-2" *ngIf="isPokemonUpdate">
+    <div class="modal-header">
+      <h5 class="modal-title mb-4 pb-2" id="modal-title">Update Pokemon</h5>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="updatePokemonForm" autocomplete="on" novalidate (ngSubmit)="updatePokemon(updatePokemonForm.value)" enctype="multipart/form-data">
+        <div class="row">
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateID_Pokemon">ID</label>
+              <input type="text" id="updateID_Pokemon" formControlName="Id" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Id', updatePokemonForm) && hasError('Id', 'required', updatePokemonForm)">ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePokeID_Pokemon">PokeAPI ID</label>
+              <input type="text" id="updatePokeID_Pokemon" formControlName="PokeId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('PokeId', updatePokemonForm) && hasError('PokeId', 'required', updatePokemonForm)">Poke ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateCompositionID_Pokemon">Composition ID</label>
+              <input type="text" id="updateCompositionID_Pokemon" formControlName="CompositionId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('CompositionId', updatePokemonForm) && hasError('CompositionId', 'required', updatePokemonForm)">Composition ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateName_Pokemon">Name</label>
+              <input type="text" id="updateName_Pokemon" formControlName="Name" class="form-control form-control-lg" placeholder="Not Selected" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Name', updatePokemonForm) && hasError('Name', 'required', updatePokemonForm)">Name is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePurpose_Pokemon">Purpose</label>
+              <input type="text" id="updatePurpose_Pokemon" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', updatePokemonForm) && hasError('Purpose', 'required', updatePokemonForm)">Purpose needs to be atleast 10 characters long</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateImageURL_Pokemon">Image URL</label>
+              <input type="text" id="updateImageURL_Pokemon" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ImageURL', updatePokemonForm) && hasError('ImageURL', 'required', updatePokemonForm)">Image URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateApiURL_Pokemon">API URL</label>
+              <input type="text" id="updateApiURL_Pokemon" formControlName="ApiURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ApiURL', updatePokemonForm) && hasError('ApiURL', 'required', updatePokemonForm)">Api URL is invalid</em>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary me-3" (click)="resetPokemonUpdateForm()" aria-label="Close">Close Form</button>
+          <div>
+            <input class="btn btn-danger" type="submit" *ngIf="!updatePokemonForm.valid" value="Update Pokemon" disabled />
+            <input class="btn btn-primary" type="submit" *ngIf="updatePokemonForm.valid" value="Update Pokemon" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="modal-content mt-2" *ngIf="isItemAdd">
+    <div class="modal-header">
+      <h5 class="modal-title mb-4 pb-2" id="modal-title">Add Item</h5>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="addItemForm" autocomplete="on" novalidate (ngSubmit)="addItem(addItemForm.value)" enctype="multipart/form-data">
+        <div class="row" *ngIf="isItemConfirmed">
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addPokeID_Item">PokeAPI ID</label>
+              <input type="text" id="addPokeID_Item" formControlName="PokeId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('PokeId', addItemForm) && hasError('PokeId', 'required', addItemForm)">Poke ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addCompositionID_Item">Composition ID</label>
+              <input type="text" id="addCompositionID_Item" formControlName="CompositionId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('CompositionId', addItemForm) && hasError('CompositionId', 'required', addItemForm)">Composition ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addName_Item">Name</label>
+              <input type="text" id="addName_Item" formControlName="Name" class="form-control form-control-lg" placeholder="Not Selected" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Name', addItemForm) && hasError('Name', 'required', addItemForm)">Name is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addPurpose_Item">Purpose</label>
+              <input type="text" id="addPurpose_Item" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', addItemForm) && hasError('Purpose', 'required', addItemForm)">Purpose is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addImageURL_Item">Image URL</label>
+              <input type="text" id="addImageURL_Item" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ImageURL', addItemForm) && hasError('ImageURL', 'required', addItemForm)">Image URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="addApiURL_Item">API URL</label>
+              <input type="text" id="addApiURL_Item" formControlName="ApiURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ApiURL', addItemForm) && hasError('ApiURL', 'required', addItemForm)">Api URL is invalid</em>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="!isItemConfirmed">
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" id="search-item-input" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchItem()" placeholder="Search by Item Name or ID" />
+            <button type="button" class="btn btn-primary" id="search-item-btn" (click)="searchItem()">SEARCH</button>
+          </div>
+          <div class="mb-5 mt-5" *ngIf="currentSearchItem.id! === undefined">
+            <h3 class="text-center">Item Not Found</h3>
+          </div>
+          <div *ngIf="currentSearchItem.id! > 0">
+            <div class="">
+              <div class="text-center"><h1 class="text-capitalize">{{this.currentSearchItem.name}}</h1></div>
+              <div class="row">
+                <div class="col-6 text-center">
+                  <img src="{{this.currentSearchItem.sprites?.default}}" class="img-fluid" width="150" />
+                </div>
+                <div class="col-6">
+                  <p class="text-capitalize">Category: {{this.currentSearchItem.category?.name!}}</p>
+                  <p class="text-capitalize">Cost: {{this.currentSearchItem.cost}} Pokédollars</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="mt-2">Attributes</h5>
+                  <div class="col-md-12" *ngFor="let attribute of this.currentSearchItem.attributes!; let i = index;">
+                    <p class="text-capitalize">{{i+1}}.) {{attribute.name!}}</p>
+                  </div>
+                  <p *ngIf="this.currentSearchItem.attributes?.length! <= 0" class="text-capitalize">1.) None</p>
+                </div>
+                <div class="col-6">
+                  <h5 class="mt-2">Effects</h5>
+                  <div class="col-md-12" *ngFor="let effect of this.currentSearchItem.effect_entries!; let i = index;">
+                    <p class="">{{effect.effect!}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="button" class="btn btn-primary" (click)="initializeAddItemForm(currentComposition.Id!, currentSearchItem)">SELECT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary me-3" (click)="resetItemAddForm()" aria-label="Close">Close Form</button>
+          <div>
+            <input class="btn btn-danger" type="submit" *ngIf="!addItemForm.valid" value="Add Item" disabled />
+            <input class="btn btn-primary" type="submit" *ngIf="addItemForm.valid" value="Add Item" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="modal-content mt-2" *ngIf="isItemUpdate">
+    <div class="modal-header">
+      <h5 class="modal-title mb-4 pb-2" id="modal-title">Update Item</h5>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="updateItemForm" autocomplete="on" novalidate (ngSubmit)="updateItem(updateItemForm.value)" enctype="multipart/form-data">
+        <div class="row">
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateID_Item">ID</label>
+              <input type="text" id="updateID_Item" formControlName="Id" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Id', updateItemForm) && hasError('Id', 'required', updateItemForm)">ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePokeID_Item">PokeAPI ID</label>
+              <input type="text" id="updatePokeID_Item" formControlName="PokeId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('PokeId', updateItemForm) && hasError('PokeId', 'required', updateItemForm)">Poke ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateCompositionID_Item">Composition ID</label>
+              <input type="text" id="updateCompositionID_Item" formControlName="CompositionId" class="form-control form-control-lg" placeholder="0" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('CompositionId', updateItemForm) && hasError('CompositionId', 'required', updateItemForm)">Composition ID is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateName_Item">Name</label>
+              <input type="text" id="updateName_Item" formControlName="Name" class="form-control form-control-lg" placeholder="Not Selected" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Name', updateItemForm) && hasError('Name', 'required', updateItemForm)">Name is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updatePurpose_Item">Purpose</label>
+              <input type="text" id="updatePurpose_Item" formControlName="Purpose" class="form-control form-control-lg" placeholder="This pokemon is for..." />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('Purpose', updateItemForm) && hasError('Purpose', 'required', updateItemForm)">Purpose needs to be atleast 10 characters long</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateImageURL_Item">Image URL</label>
+              <input type="text" id="updateImageURL_Item" formControlName="ImageURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ImageURL', updateItemForm) && hasError('ImageURL', 'required', updateItemForm)">Image URL is invalid</em>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4 pb-2">
+            <div class="form-outline">
+              <label class="form-label" for="updateApiURL_Item">API URL</label>
+              <input type="text" id="updateApiURL_Item" formControlName="ApiURL" class="form-control form-control-lg" placeholder="https://pokeapi.co/" readonly />
+            </div>
+            <div class="col-md-4 text-danger">
+              <em *ngIf="validateControl('ApiURL', updateItemForm) && hasError('ApiURL', 'required', updateItemForm)">Api URL is invalid</em>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary me-3" (click)="resetItemUpdateForm()" aria-label="Close">Close Form</button>
+          <div>
+            <input class="btn btn-danger" type="submit" *ngIf="!updateItemForm.valid" value="Update Item" disabled />
+            <input class="btn btn-primary" type="submit" *ngIf="updateItemForm.valid" value="Update Item" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+</jw-modal>
+
+<div class="modal fade" id="addCompositionForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Add Composition</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addCompositionForm" autocomplete="on" novalidate (ngSubmit)="addComposition(addCompositionForm.value)" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="col-md-12 mb-4 pb-2">
+                <div class="form-outline">
+                  <label class="form-label" for="BuildId">Build ID</label>
+                  <input type="text" id="addBuildID_Composition" formControlName="BuildId" class="form-control form-control-lg" placeholder="0" readonly />
+                </div>
+              </div>
+              <div class="form-outline">
+                <label class="form-label" for="addName_Composition">Name</label>
+                <input type="text" id="addName_Composition" formControlName="Name" class="form-control form-control-lg" placeholder="Composition #..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Name', addCompositionForm) && hasError('Name', 'required', addCompositionForm)">Name is required and at least 4 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="addDescription_Composition">Description</label>
+                <input type="text" id="addDescription_Composition" formControlName="Description" class="form-control form-control-lg" placeholder="This composition is for..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Description', addCompositionForm) && hasError('Description', 'required', addCompositionForm)">Description is required and at least 10 chracters long</em>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <div>
+              <input class="btn btn-danger" type="submit" *ngIf="!addCompositionForm.valid" value="Add" disabled />
+              <input class="btn btn-primary" type="submit" *ngIf="addCompositionForm.valid" data-bs-dismiss="modal" value="Add" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="updateBuildForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Update Build</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateBuildForm" autocomplete="on" novalidate (ngSubmit)="updateBuild(updateBuildForm.value)" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="BuildId">Build ID</label>
+                <input type="text" id="updateID_Build" formControlName="Id" class="form-control form-control-lg" placeholder="0" readonly />
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="updateName_Build">Name</label>
+                <input type="text" id="updateName_Build" formControlName="Name" class="form-control form-control-lg" placeholder="Build #..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Name', updateBuildForm) && hasError('Name', 'required', updateBuildForm)">Name is required and at least 4 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="updateGameVersion">Game Version</label>
+                <input type="text" id="updateGameVersion" formControlName="GameVersion" class="form-control form-control-lg" placeholder="Leaf Green" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('GameVersion', updateBuildForm) && hasError('GameVersion', 'required', updateBuildForm)">Game Version is required and at least 4 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="updateDescription_Build">Description</label>
+                <input type="text" id="updateDescription_Build" formControlName="Description" class="form-control form-control-lg" placeholder="This build is for..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Description', updateBuildForm) && hasError('Description', 'required', updateBuildForm)">Description is required and at least 10 chracters long</em>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <div>
+              <input class="btn btn-danger" type="submit" *ngIf="!updateBuildForm.valid" value="Update" disabled />
+              <input class="btn btn-primary" type="submit" *ngIf="updateBuildForm.valid" data-bs-dismiss="modal" value="Update" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addBuildForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-title">Add Build</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addBuildForm" autocomplete="on" novalidate (ngSubmit)="addBuild(addBuildForm.value)" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="addName_Build">Name</label>
+                <input type="text" id="addName_Build" formControlName="Name" class="form-control form-control-lg" placeholder="Build #..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Name', addBuildForm) && hasError('Name', 'required', addBuildForm)">Name is required and at least 4 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="addGameVersion">Game Version</label>
+                <input type="text" id="addGameVersion" formControlName="GameVersion" class="form-control form-control-lg" placeholder="Leaf Green" />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('GameVersion', addBuildForm) && hasError('GameVersion', 'required', addBuildForm)">Game Version is required and at least 4 chracters long</em>
+              </div>
+            </div>
+            <div class="col-md-12 mb-4 pb-2">
+              <div class="form-outline">
+                <label class="form-label" for="addDescription_Build">Description</label>
+                <input type="text" id="addDescription_Build" formControlName="Description" class="form-control form-control-lg" placeholder="This build is for..." />
+              </div>
+              <div class="col-md-12 text-danger">
+                <em *ngIf="validateControl('Description', addBuildForm) && hasError('Description', 'required', addBuildForm)">Description is required and at least 10 chracters long</em>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            <div>
+              <input class="btn btn-danger" type="submit" *ngIf="!addBuildForm.valid" value="Add" disabled />
+              <input class="btn btn-primary" type="submit" *ngIf="addBuildForm.valid" data-bs-dismiss="modal" value="Add" />
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
@@ -43,7 +1014,7 @@
                 <input type="text" id="UserName" formControlName="UserName" class="form-control form-control-lg" placeholder="JohnDoe123" />
               </div>
               <div class="col-md-12 text-danger">
-                <em *ngIf="validateControl('UserName') && hasError('UserName', 'required')">Username is required and at least 4 chracters long</em>
+                <em *ngIf="validateControl('UserName', updateUserForm) && hasError('UserName', 'required', updateUserForm)">Username is required and at least 4 chracters long</em>
               </div>
             </div>
           </div>
@@ -54,7 +1025,7 @@
                 <input type="text" id="FirstName" formControlName="FirstName" class="form-control form-control-lg" placeholder="John" />
               </div>
               <div class="col-md-12 text-danger">
-                <em *ngIf="validateControl('FirstName') && hasError('FirstName', 'required')">First name is required and at least 3 chracters long</em>
+                <em *ngIf="validateControl('FirstName', updateUserForm) && hasError('FirstName', 'required', updateUserForm)">First name is required and at least 3 chracters long</em>
               </div>
             </div>
             <div class="col-md-6 mb-4">
@@ -63,7 +1034,7 @@
                 <input type="text" id="LastName" formControlName="LastName" class="form-control form-control-lg" placeholder="Doe" />
               </div>
               <div class="col-md-12 text-danger">
-                <em *ngIf="validateControl('LastName') && hasError('LastName', 'required')">Last name is required and at least 3 chracters long</em>
+                <em *ngIf="validateControl('LastName', updateUserForm) && hasError('LastName', 'required', updateUserForm)">Last name is required and at least 3 chracters long</em>
               </div>
             </div>
           </div>
@@ -74,8 +1045,8 @@
                 <input type="email" id="Email" formControlName="Email" class="form-control form-control-lg" placeholder="user@example.com" />
               </div>
               <div class="col-md-6 text-danger">
-                <em *ngIf="validateControl('Email') && hasError('Email', 'required')">Email is required</em>
-                <em *ngIf="validateControl('Email') && hasError('Email', 'email')">Please provide a valid email</em>
+                <em *ngIf="validateControl('Email', updateUserForm) && hasError('Email', 'required', updateUserForm)">Email is required</em>
+                <em *ngIf="validateControl('Email', updateUserForm) && hasError('Email', 'email', updateUserForm)">Please provide a valid email</em>
               </div>
             </div>
           </div>
@@ -86,8 +1057,8 @@
                 <input type="password" id="Password" formControlName="Password" class="form-control form-control-lg" placeholder="Password" />
               </div>
               <div class="col-md-12 text-danger text-justify">
-                <em *ngIf="validateControl('Password') && hasError('Password', 'required')">Password is required</em>
-                <em *ngIf="hasError('Password', 'pattern')">
+                <em *ngIf="validateControl('Password', updateUserForm) && hasError('Password', 'required', updateUserForm)">Password is required</em>
+                <em *ngIf="hasError('Password', 'pattern', updateUserForm)">
                   Password must contain at least one number, one uppercase and a lowercase letter, and a special character.
                   Also, the password must be at least 8 characters and cannot contain whitespace.
                 </em>
@@ -99,8 +1070,8 @@
                 <input type="password" id="ConfirmPassword" formControlName="ConfirmPassword" class="form-control form-control-lg" placeholder="Confirm Password" />
               </div>
               <div class="col-md-12 text-danger">
-                <em *ngIf="hasError('ConfirmPassword', 'mustMatch')">Passwords must match</em>
-                <em *ngIf="validateControl('ConfirmPassword') && hasError('ConfirmPassword', 'required')">Confirmation is required</em>
+                <em *ngIf="hasError('ConfirmPassword', 'mustMatch', updateUserForm)">Passwords must match</em>
+                <em *ngIf="validateControl('ConfirmPassword', updateUserForm) && hasError('ConfirmPassword', 'required', updateUserForm)">Confirmation is required</em>
               </div>
             </div>
           </div>

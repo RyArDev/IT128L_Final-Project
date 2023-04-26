@@ -49,15 +49,15 @@ export class LoginPageComponent implements OnInit, OnChanges {
     });
   }
 
-  public validateControl = (controlName: string) => {
+  protected validateControl = (controlName: string) => {
     return this.loginForm.get(controlName)!.invalid && this.loginForm.get(controlName)!.touched
   }
 
-  public hasError = (controlName: string, errorName: string) => {
+  protected hasError = (controlName: string, errorName: string) => {
     return this.loginForm.get(controlName)!.hasError(errorName)
   }
 
-  public loginUser = async (loginFormValue: any) => {
+  protected loginUser = async (loginFormValue: any) => {
 
     const formValues = { ...loginFormValue };
 
@@ -82,7 +82,7 @@ export class LoginPageComponent implements OnInit, OnChanges {
 
             setTimeout(() => {
               this.router.navigate(['/home']);
-            }, 3000);
+            }, 1500);
 
           },
           error: (err: HttpErrorResponse) => {

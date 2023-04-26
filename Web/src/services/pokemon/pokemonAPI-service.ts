@@ -1,19 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import PROXY_CONFIG from '../../config/proxy.conf';
 
 @Injectable({ providedIn: 'root' })
 export class PokemonAPIService {
-  
+
   pokemons: Object[] = [];
-  pokemon: Object = {};
   items: Object[] = [];
-  item: Object = {};
+
+  pokemonData: BehaviorSubject<Object[]> = new BehaviorSubject<Object[]>([]);
+  itemData: BehaviorSubject<Object[]> = new BehaviorSubject<Object[]>([]);
 
   constructor(private http: HttpClient) { }
 
-  public getPokemon = async (quantity: number, offSet: number): Promise<Object[]> => {
+  public getPokemon = async (quantity: number, offSet: number, cacheData: boolean): Promise<Object[]> => {
 
+    if (cacheData) {
+
+      return this.pokemons;
+
+    }
+
+    this.pokemonData.next([])
     this.pokemons = [];
 
     try {
@@ -37,12 +46,13 @@ export class PokemonAPIService {
 
           data.forEach(async (pokemon) => {
 
-            await this.http.get<any>(pokemon.url).subscribe(
-              (response) => {
+            await this.http.get<any>(pokemon.url).pipe(tap(p => this.pokemonData.next([...this.pokemonData.getValue(), p]))).subscribe(
+              (retrievedPokemon) => {
 
-                this.pokemons.push(response);
-
-              });
+                this.pokemons.push(retrievedPokemon);
+                
+              }
+            )
 
           });
 
@@ -62,19 +72,39 @@ export class PokemonAPIService {
 
   }
 
-  public getPokemonByIdName = async (idName: string): Promise<Object> => {
+  public getPokemonByIdName = (idName: string): Observable<Object> => {
 
-    this.pokemon = {};
+    let pokemon: any = {};
 
     try {
 
-      if (Number(idName)) {
+      if (parseInt(idName)) {
 
-        this.pokemon = this.http.get<any>(`${PROXY_CONFIG.pokeAPI}/pokemon/${parseInt(idName)}`);
+        const n = parseInt(idName);
+
+        return this.http.get(`${PROXY_CONFIG.pokeAPI}/pokemon/${n}`).pipe(
+          map((response: any) => {
+
+            pokemon = response;
+            return pokemon;
+
+          })
+
+        );
 
       } else {
 
-        this.pokemon = this.http.get<any>(`${PROXY_CONFIG.pokeAPI}/pokemon/${idName}`);
+        idName = idName.toLowerCase();
+
+        return this.http.get(`${PROXY_CONFIG.pokeAPI}/pokemon/${idName}`).pipe(
+          map((response: any) => {
+
+            pokemon = response;
+            return pokemon;
+
+          })
+
+        );
 
       }
 
@@ -88,12 +118,19 @@ export class PokemonAPIService {
 
     }
 
-    return this.pokemon;
+    return of(pokemon);
 
   }
 
-  public getItems = async (quantity: number, offSet: number): Promise<Object[]> => {
+  public getItems = async (quantity: number, offSet: number, cacheData: boolean): Promise<Object[]> => {
 
+    if (cacheData) {
+
+      return this.items;
+
+    }
+
+    this.itemData.next([])
     this.items = [];
 
     try {
@@ -117,10 +154,10 @@ export class PokemonAPIService {
 
           data.forEach(async (item) => {
 
-            await this.http.get<any>(item.url).subscribe(
-              (response) => {
+            await this.http.get<any>(item.url).pipe(tap(i => this.itemData.next([...this.itemData.getValue(), i]))).subscribe(
+              (retrievedItem) => {
 
-                this.items.push(response);
+                this.items.push(retrievedItem);
 
               });
 
@@ -142,19 +179,39 @@ export class PokemonAPIService {
 
   }
 
-  public getItemByIdName = async (idName: string): Promise<Object> => {
+  public getItemByIdName = (idName: string): Observable<Object> => {
 
-    this.item = {};
+    let item: any = {};
 
     try {
 
-      if (Number(idName)) {
+      if (parseInt(idName)) {
 
-        this.item = this.http.get<any>(`${PROXY_CONFIG.pokeAPI}/item/${parseInt(idName)}`);
+        const n = parseInt(idName);
+
+        return this.http.get(`${PROXY_CONFIG.pokeAPI}/item/${n}`).pipe(
+          map((response: any) => {
+
+            item = response;
+            return item;
+
+          })
+
+        );
 
       } else {
 
-        this.item = this.http.get<any>(`${PROXY_CONFIG.pokeAPI}/item/${idName}`);
+        idName = idName.toLowerCase();
+
+        return this.http.get(`${PROXY_CONFIG.pokeAPI}/item/${idName}`).pipe(
+          map((response: any) => {
+
+            item = response;
+            return item;
+
+          })
+
+        );
 
       }
 
@@ -168,7 +225,7 @@ export class PokemonAPIService {
 
     }
 
-    return this.item;
+    return of(item);
 
   }
 

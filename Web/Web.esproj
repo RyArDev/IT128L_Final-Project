@@ -27,4 +27,10 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\Web</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Update="src\assets\components\profile-page\Default_Profile_Picture.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
 </Project>

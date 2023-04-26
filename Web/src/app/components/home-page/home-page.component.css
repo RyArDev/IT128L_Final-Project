@@ -40,10 +40,52 @@
   object-fit: cover;
 }
 
+.clickable:hover {
+  cursor: pointer;
+}
+
+.scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 125px;
+}
+
+.pokemon-details{
+  height: 45vh;
+}
+
+.item-details {
+  height: 45vh;
+}
+
+.random-button-out{
+    
+}
+
+.random-button-in {
+  font-size: 64px;
+  padding-left: 128px;
+  padding-right: 128px;
+}
+
 @media (max-width: 1200px) {
 }
 
 @media (max-width: 1024px) {
+  .pokemon-details {
+    height: inherit;
+  }
+
+  .item-details {
+    height: inherit;
+  }
+
+  .random-button-in {
+    font-size: 32px;
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
 }
 
 @media (max-width: 768px) {

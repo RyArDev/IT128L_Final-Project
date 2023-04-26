@@ -1,6 +1,7 @@
 import { Component, SimpleChanges } from '@angular/core';
 import { AuthToken } from '../../../services/auth/auth-token';
-import { PokemonAPIService } from '../../../services/pokemon/pokemonAPI-service';
+import { ModalService } from '../../../services/commons/modal';
+import { PokemonService } from '../../../services/pokemon/pokemon-service';
 
 @Component({
   selector: 'app-build-page',
@@ -14,7 +15,7 @@ export class BuildPageComponent {
   alertSuccess: boolean = false;
   alertError: boolean = false;
 
-  constructor(private authToken: AuthToken, private pokemonAPI: PokemonAPIService) {
+  constructor(private authToken: AuthToken, private pokemon: PokemonService, protected modalService: ModalService) {
 
     this.authToken.isUserLoggedIn.subscribe(value => {
       this.isUserLoggedIn = value;

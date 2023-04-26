@@ -11,11 +11,33 @@
   border-radius: 0.25rem;
 }
 
-  .search-btn:hover {
-    background-color: #0069d9;
-    color: white;
-  }
+.search-btn:hover {
+  background-color: #0069d9;
+  color: white;
+}
 
 .search-icon {
   margin-right: 0.5rem;
+}
+
+.load-page{
+  height: 100vh;
+}
+
+.no-page {
+  height: 80vh;
+}
+
+.fill{
+  height: 50vh;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 125px;
 }

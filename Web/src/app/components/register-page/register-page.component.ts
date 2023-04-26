@@ -62,15 +62,15 @@ export class RegisterPageComponent implements OnInit, OnChanges {
     });
   }
 
-  public validateControl = (controlName: string) => {
+  protected validateControl = (controlName: string) => {
     return this.registerForm.get(controlName)!.invalid && this.registerForm.get(controlName)!.touched
   }
 
-  public hasError = (controlName: string, errorName: string) => {
+  protected hasError = (controlName: string, errorName: string) => {
     return this.registerForm.get(controlName)!.hasError(errorName)
   }
 
-  public registerUser = (registerFormValue: any) => {
+  protected registerUser = (registerFormValue: any) => {
 
     const formValues = { ...registerFormValue };
 

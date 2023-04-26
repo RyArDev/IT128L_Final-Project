@@ -1,5 +1,5 @@
 export interface PokemonAPI {
-  abilites?: [{
+  abilities?: [{
     ability?: {
       name?: string;
       url?: string;
