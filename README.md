@@ -35,11 +35,19 @@ Step 3: Configure Startup Projects
 
 Step 4: In your Git Bash terminal go to the directory of the Web project then type:
 
+1. Install NPM dependency packages.
+
+``` Git Bash Terminal
+npm install
+```
+
+2. Start the Angular development server.
+
 ``` Git Bash Terminal
 npm start
 ```
 
-Wait for the terminal to completely display this output:
+3. Wait for the terminal to completely display this output:
 
 ``` Git Bash Terminal
 npm start
